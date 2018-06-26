@@ -26,24 +26,6 @@ public class DiscoveredPrintList extends NativeResource {
     }
 
 
-    public int size() {
-        return size;
-    }
-
-
-    public DiscoveredPrint get(int index) {
-        if (size == 0) {
-            throw new ArrayIndexOutOfBoundsException("it is empty");
-        }
-
-        if (index >= size) {
-            throw new ArrayIndexOutOfBoundsException(format("%d out of interval [0, %d[", index, size));
-        }
-
-        return nativeGet(index);
-    }
-
-
     /**
      * Frees a list of discovered prints.
      *
@@ -51,9 +33,17 @@ public class DiscoveredPrintList extends NativeResource {
      * so make sure you do not use any discovered prints after
      * calling this function.
      *
-     * Called by superclass's method "close()".
+     * Called by method "clearResources()".
      */
     private native void nativeClose();
+
+    private native DiscoveredPrint fp_get(int index);
+    private static native DiscoveredPrintList fp_discoverPrints();
+
+
+    public int size() {
+        return size;
+    }
 
 
     /**
@@ -62,7 +52,19 @@ public class DiscoveredPrintList extends NativeResource {
      * @param index
      * @return discovered device instance
      */
-    private native DiscoveredPrint nativeGet(int index);
+    public DiscoveredPrint get(int index) {
+        check();
+
+        if (size == 0) {
+            throw new ArrayIndexOutOfBoundsException("it is empty");
+        }
+
+        if (index >= size) {
+            throw new ArrayIndexOutOfBoundsException(format("%d out of interval [0, %d[", index, size));
+        }
+
+        return fp_get(index);
+    }
 
 
     /**
@@ -71,5 +73,7 @@ public class DiscoveredPrintList extends NativeResource {
      *
      * @return    list of discovered prints, must be freed with close() after use.
      */
-    public static native DiscoveredPrintList discoverPrints();
+    public static DiscoveredPrintList discoverPrints() {
+        return fp_discoverPrints();
+    }
 }

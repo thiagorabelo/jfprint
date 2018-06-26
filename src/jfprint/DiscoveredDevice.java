@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
  */
 public class DiscoveredDevice extends NativeResource {
 
+
     private ByteBuffer pointer;
 
 
@@ -22,7 +23,14 @@ public class DiscoveredDevice extends NativeResource {
     }
 
 
+    /**
+     * Close a device.
+     *
+     * Called by method "clearResources()".
+     */
     private native void nativeClose();
+
+    private native Device fp_open();
 
 
     /**
@@ -33,7 +41,10 @@ public class DiscoveredDevice extends NativeResource {
      *
      * @return    the opened device handle, or {@code null} on error.
      */
-    public native Device open();
+    public Device open() {
+        check();
+        return fp_open();
+    }
 
 
     /**

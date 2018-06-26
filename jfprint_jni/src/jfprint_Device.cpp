@@ -25,7 +25,7 @@ JNIEXPORT void JNICALL Java_jfprint_Device_nativeClose
 }
 
 
-JNIEXPORT jobject JNICALL Java_jfprint_Device_getDriver
+JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1getDriver
   (JNIEnv *env, jobject obj)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -43,7 +43,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_getDriver
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_Device_getNumEnrollStages
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getNumEnrollStages
   (JNIEnv *env, jobject obj)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -51,7 +51,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_getNumEnrollStages
 }
 
 
-JNIEXPORT jlong JNICALL Java_jfprint_Device_getDevType
+JNIEXPORT jlong JNICALL Java_jfprint_Device_fp_1getDevType
   (JNIEnv *env, jobject obj)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -59,7 +59,7 @@ JNIEXPORT jlong JNICALL Java_jfprint_Device_getDevType
 }
 
 
-JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsPrintData
+JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsPrintData
   (JNIEnv *env, jobject obj, jobject printData)
 {
     fp_print_data **data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, printData, "pointer"));
@@ -69,7 +69,7 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsPrintData
 }
 
 
-JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsDiscoveredPrint
+JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsDiscoveredPrint
   (JNIEnv *env, jobject obj, jobject discoveredPrint)
 {
     fp_dscv_print **discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, discoveredPrint, "pointer"));
@@ -79,7 +79,7 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsDiscoveredPrint
 }
 
 
-JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsImaging
+JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsImaging
   (JNIEnv *env, jobject obj)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -87,7 +87,7 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsImaging
 }
 
 
-JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsIdentification
+JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsIdentification
   (JNIEnv *env, jobject obj)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -95,7 +95,7 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsIdentification
 }
 
 
-JNIEXPORT jobject JNICALL Java_jfprint_Device_imgCapture
+JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
   (JNIEnv *env, jobject obj, jboolean unconditional)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -125,7 +125,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_imgCapture
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_Device_getImgWidth
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgWidth
   (JNIEnv *env, jobject obj)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -133,7 +133,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_getImgWidth
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_Device_getImgHeight
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgHeight
   (JNIEnv *env, jobject obj)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -141,7 +141,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_getImgHeight
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_Device_enrollFingerImg
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
   (JNIEnv *env, jobject obj, jobject printDataWrapper, jobject imgWrapper)
 {
     jclass wrapperPrintDataCls = env->GetObjectClass(printDataWrapper);
@@ -198,7 +198,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_enrollFingerImg
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_Device_verifyFingerImg
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
   (JNIEnv *env, jobject obj, jobject enrolled_print, jobject imgWrapper)
 {
     jclass wrapperImgCls = env->GetObjectClass(imgWrapper);

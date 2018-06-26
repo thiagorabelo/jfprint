@@ -131,7 +131,7 @@ public class RunTests {
         }
 
         System.gc();
-        Thread.sleep(3000);
+        Thread.sleep(1000);
 
         Core.exit();
         System.out.println("Turn off lib.");

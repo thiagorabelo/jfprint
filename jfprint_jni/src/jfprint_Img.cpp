@@ -18,7 +18,7 @@ JNIEXPORT void JNICALL Java_jfprint_Img_nativeClose
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_Img_getHeight
+JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getHeight
   (JNIEnv *env, jobject obj)
 {
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -26,7 +26,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_getHeight
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_Img_getWidth
+JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getWidth
   (JNIEnv *env, jobject obj)
 {
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -34,7 +34,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_getWidth
 }
 
 
-JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_getData
+JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_fp_1getData
   (JNIEnv *env, jobject obj)
 {
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -51,7 +51,7 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_getData
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_Img_saveToFile
+JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1saveToFile
   (JNIEnv *env, jobject obj, jstring path)
 {
     char *cpath = const_cast<char*>(env->GetStringUTFChars(path, NULL));
@@ -66,7 +66,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_saveToFile
 }
 
 
-JNIEXPORT void JNICALL Java_jfprint_Img_standardize
+JNIEXPORT void JNICALL Java_jfprint_Img_fp_1standardize
   (JNIEnv *env, jobject obj)
 {
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -74,7 +74,7 @@ JNIEXPORT void JNICALL Java_jfprint_Img_standardize
 }
 
 
-JNIEXPORT jobject JNICALL Java_jfprint_Img_binarize
+JNIEXPORT jobject JNICALL Java_jfprint_Img_fp_1binarize
   (JNIEnv *env, jobject obj)
 {
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));

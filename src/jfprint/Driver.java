@@ -13,6 +13,7 @@ public class Driver extends NativeResource {
 
     private ByteBuffer pointer;
 
+
     private Driver() {
     }
 
@@ -26,9 +27,15 @@ public class Driver extends NativeResource {
 
 
     /**
+     * Close a device.
      *
+     * Called by method "clearResources()".
      */
     private native void nativeClose();
+
+    private native String fp_getName();
+    private native String fp_getFullName();
+    private native long fp_getDriverID();
 
 
     /**
@@ -36,7 +43,10 @@ public class Driver extends NativeResource {
      *
      * @return The driver name.
      */
-    public native String getName();
+    public String getName() {
+        check();
+        return fp_getName();
+    }
 
 
     /**
@@ -44,7 +54,10 @@ public class Driver extends NativeResource {
      *
      * @return The descriptive name of the driver.
      */
-    public native String getFullName();
+    public String getFullName() {
+        check();
+        return fp_getFullName();
+    }
 
 
     /**
@@ -52,5 +65,8 @@ public class Driver extends NativeResource {
      *
      * @return The driver ID.
      */
-    public native long getDriverID();
+    public long getDriverID() {
+        check();
+        return fp_getDriverID();
+    }
 }

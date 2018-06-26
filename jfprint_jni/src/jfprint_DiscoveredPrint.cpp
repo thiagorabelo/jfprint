@@ -15,7 +15,7 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredPrint_nativeClose
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_getDriverId
+JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getDriverId
   (JNIEnv *env, jobject obj)
 {
     fp_dscv_print **p_discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -23,7 +23,7 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_getDriverId
 }
 
 
-JNIEXPORT jlong JNICALL Java_jfprint_DiscoveredPrint_getDevtype
+JNIEXPORT jlong JNICALL Java_jfprint_DiscoveredPrint_fp_1getDevtype
   (JNIEnv *env, jobject obj)
 {
     fp_dscv_print **p_discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -31,7 +31,7 @@ JNIEXPORT jlong JNICALL Java_jfprint_DiscoveredPrint_getDevtype
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_getFinger
+JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getFinger
   (JNIEnv *env, jobject obj)
 {
     fp_dscv_print **p_discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -39,7 +39,7 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_getFinger
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_delete
+JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1delete
   (JNIEnv *env, jobject obj)
 {
     fp_dscv_print **p_discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));

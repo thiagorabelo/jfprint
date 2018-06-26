@@ -43,98 +43,98 @@ JNIEXPORT void JNICALL Java_jfprint_Device_nativeClose
 
 /*
  * Class:     jfprint_Device
- * Method:    getDriver
+ * Method:    fp_getDriver
  * Signature: ()Ljfprint/Driver;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_Device_getDriver
+JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1getDriver
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    getNumEnrollStages
+ * Method:    fp_getNumEnrollStages
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_jfprint_Device_getNumEnrollStages
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getNumEnrollStages
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    getDevType
+ * Method:    fp_getDevType
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_jfprint_Device_getDevType
+JNIEXPORT jlong JNICALL Java_jfprint_Device_fp_1getDevType
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    supportsPrintData
+ * Method:    fp_supportsPrintData
  * Signature: (Ljfprint/PrintData;)Z
  */
-JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsPrintData
+JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsPrintData
   (JNIEnv *, jobject, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    supportsDiscoveredPrint
+ * Method:    fp_supportsDiscoveredPrint
  * Signature: (Ljfprint/DiscoveredPrint;)Z
  */
-JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsDiscoveredPrint
+JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsDiscoveredPrint
   (JNIEnv *, jobject, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    supportsImaging
+ * Method:    fp_supportsImaging
  * Signature: ()Z
  */
-JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsImaging
+JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsImaging
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    supportsIdentification
+ * Method:    fp_supportsIdentification
  * Signature: ()Z
  */
-JNIEXPORT jboolean JNICALL Java_jfprint_Device_supportsIdentification
+JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsIdentification
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    imgCapture
+ * Method:    fp_imgCapture
  * Signature: (Z)Ljfprint/Img;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_Device_imgCapture
+JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
   (JNIEnv *, jobject, jboolean);
 
 /*
  * Class:     jfprint_Device
- * Method:    getImgWidth
+ * Method:    fp_getImgWidth
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_jfprint_Device_getImgWidth
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgWidth
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    getImgHeight
+ * Method:    fp_getImgHeight
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_jfprint_Device_getImgHeight
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgHeight
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    enrollFingerImg
+ * Method:    fp_enrollFingerImg
  * Signature: (Ljfprint/util/Wrapper;Ljfprint/util/Wrapper;)I
  */
-JNIEXPORT jint JNICALL Java_jfprint_Device_enrollFingerImg
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
   (JNIEnv *, jobject, jobject, jobject);
 
 /*
  * Class:     jfprint_Device
- * Method:    verifyFingerImg
+ * Method:    fp_verifyFingerImg
  * Signature: (Ljfprint/PrintData;Ljfprint/util/Wrapper;)I
  */
-JNIEXPORT jint JNICALL Java_jfprint_Device_verifyFingerImg
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
   (JNIEnv *, jobject, jobject, jobject);
 
 #ifdef __cplusplus

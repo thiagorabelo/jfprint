@@ -17,10 +17,10 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredDevice_nativeClose
 
 /*
  * Class:     jfprint_DiscoveredDevice
- * Method:    open
+ * Method:    fp_open
  * Signature: ()Ljfprint/Device;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_open
+JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

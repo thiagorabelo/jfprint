@@ -14,7 +14,7 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredDevice_nativeClose
 }
 
 
-JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_open
+JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
   (JNIEnv *env, jobject obj)
 {
     fp_dscv_dev **p_discovered_dev = reinterpret_cast<fp_dscv_dev**>(Util::getPointerAddress(env, obj, "pointer"));

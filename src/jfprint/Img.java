@@ -31,29 +31,54 @@ public class Img extends NativeResource {
      */
     private native void nativeClose();
 
+    private native int fp_getHeight();
+    private native int fp_getWidth();
+    private native byte[] fp_getData();
+    private native int fp_saveToFile(String path);
+    private native void fp_standardize();
+    private native Img fp_binarize();
+
 
  	//Gets the pixel height of an image.
-    public native int getHeight();
+    public int getHeight() {
+        check();
+        return fp_getHeight();
+    }
 
 
     //Gets the pixel width of an image.
-    public native int getWidth();
+    public int getWidth() {
+        check();
+        return fp_getWidth();
+    }
 
 
     //Gets the greyscale data for an image.
-    public native byte[] getData();
+    public byte[] getData() {
+        check();
+        return fp_getData();
+    }
 
 
     //A quick convenience function to save an image to a file in PGM format.
-    public native int saveToFile(String path);
+    public int saveToFile(String path) {
+        check();
+        return fp_saveToFile(path);
+    }
 
 
     //Standardizes an image by normalizing its orientation, colors, etc.
-    public native void standardize();
+    public void standardize() {
+        check();
+        fp_standardize();
+    }
 
 
     //Get a binarized form of a standardized scanned image.
-    public native Img binarize();
+    public Img binarize() {
+        check();
+        return fp_binarize();
+    }
 
 
     //Get a list of minutiae detected in an image.

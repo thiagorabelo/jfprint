@@ -17,50 +17,50 @@ JNIEXPORT void JNICALL Java_jfprint_Img_nativeClose
 
 /*
  * Class:     jfprint_Img
- * Method:    getHeight
+ * Method:    fp_getHeight
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_jfprint_Img_getHeight
+JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getHeight
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Img
- * Method:    getWidth
+ * Method:    fp_getWidth
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_jfprint_Img_getWidth
+JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getWidth
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Img
- * Method:    getData
+ * Method:    fp_getData
  * Signature: ()[B
  */
-JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_getData
+JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_fp_1getData
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Img
- * Method:    saveToFile
+ * Method:    fp_saveToFile
  * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_jfprint_Img_saveToFile
+JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1saveToFile
   (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     jfprint_Img
- * Method:    standardize
+ * Method:    fp_standardize
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_jfprint_Img_standardize
+JNIEXPORT void JNICALL Java_jfprint_Img_fp_1standardize
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Img
- * Method:    binarize
+ * Method:    fp_binarize
  * Signature: ()Ljfprint/Img;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_Img_binarize
+JNIEXPORT jobject JNICALL Java_jfprint_Img_fp_1binarize
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

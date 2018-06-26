@@ -16,6 +16,11 @@ public class DiscoveredPrint extends NativeResource {
     }
 
 
+    /**
+     * Close a device.
+     *
+     * Called by method "clearResources()".
+     */
     @Override
     protected void clearResources() {
         nativeClose();
@@ -26,23 +31,40 @@ public class DiscoveredPrint extends NativeResource {
 
     private native void nativeClose();
 
+    private native int fp_getDriverId();
+    private native long fp_getDevtype();
+    private native int fp_getFinger();
+    private native int fp_delete();
+
 
     /**
      * Gets the driver ID for a discovered print.
      *
      * @return
      */
-    public native int getDriverId();
+    public int getDriverId() {
+        check();
+        return fp_getDriverId();
+    }
 
 
     //Gets the devtype for a discovered print.
-    public native long getDevtype();
+    public long getDevtype() {
+        check();
+        return fp_getDevtype();
+    }
 
 
     //Gets the finger code for a discovered print.
-    public native int getFinger();
+    public int getFinger() {
+        check();
+        return getFinger();
+    }
 
 
     //Removes a discovered print from disk.
-    public native int delete();
+    public int delete() {
+        check();
+        return delete();
+    }
 }

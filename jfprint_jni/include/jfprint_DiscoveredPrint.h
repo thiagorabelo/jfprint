@@ -17,34 +17,34 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredPrint_nativeClose
 
 /*
  * Class:     jfprint_DiscoveredPrint
- * Method:    getDriverId
+ * Method:    fp_getDriverId
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_getDriverId
+JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getDriverId
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_DiscoveredPrint
- * Method:    getDevtype
+ * Method:    fp_getDevtype
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_jfprint_DiscoveredPrint_getDevtype
+JNIEXPORT jlong JNICALL Java_jfprint_DiscoveredPrint_fp_1getDevtype
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_DiscoveredPrint
- * Method:    getFinger
+ * Method:    fp_getFinger
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_getFinger
+JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getFinger
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_DiscoveredPrint
- * Method:    delete
+ * Method:    fp_delete
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_delete
+JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1delete
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

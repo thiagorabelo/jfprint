@@ -17,26 +17,26 @@ JNIEXPORT void JNICALL Java_jfprint_Driver_nativeClose
 
 /*
  * Class:     jfprint_Driver
- * Method:    getName
+ * Method:    fp_getName
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_jfprint_Driver_getName
+JNIEXPORT jstring JNICALL Java_jfprint_Driver_fp_1getName
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Driver
- * Method:    getFullName
+ * Method:    fp_getFullName
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_jfprint_Driver_getFullName
+JNIEXPORT jstring JNICALL Java_jfprint_Driver_fp_1getFullName
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_Driver
- * Method:    getDriverID
+ * Method:    fp_getDriverID
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_jfprint_Driver_getDriverID
+JNIEXPORT jlong JNICALL Java_jfprint_Driver_fp_1getDriverID
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

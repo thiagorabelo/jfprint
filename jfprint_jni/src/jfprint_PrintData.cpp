@@ -19,7 +19,7 @@ JNIEXPORT void JNICALL Java_jfprint_PrintData_nativeClose
 }
 
 
-JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_getData
+JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_fp_1getData
   (JNIEnv *env, jobject obj)
 {
     fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -40,7 +40,7 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_getData
 }
 
 
-JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fromData // Ljfprint/PrintData;
+JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
   (JNIEnv *env, jclass cls, jbyteArray jdata)
 {
     jsize jArraySize = env->GetArrayLength(jdata);
@@ -79,7 +79,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fromData // Ljfprint/PrintData;
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_PrintData_dataSave
+JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1dataSave
   (JNIEnv *env, jobject obj, jint finger)
 {
     fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -87,7 +87,7 @@ JNIEXPORT jint JNICALL Java_jfprint_PrintData_dataSave
 }
 
 
-JNIEXPORT jobject JNICALL Java_jfprint_PrintData_dataLoad
+JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1dataLoad
   (JNIEnv *env, jclass cls, jobject device, jint finger)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, device, "pointer"));
@@ -112,7 +112,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_dataLoad
 }
 
 
-JNIEXPORT jint JNICALL Java_jfprint_PrintData_delete
+JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1delete
   (JNIEnv *env, jclass cls, jobject device, jint finger)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, device, "pointer"));
@@ -120,7 +120,7 @@ JNIEXPORT jint JNICALL Java_jfprint_PrintData_delete
 }
 
 
-JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fromDiscoveredPrint
+JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromDiscoveredPrint
   (JNIEnv *env, jclass cls, jobject discoveredPrint)
 {
     fp_dscv_print **discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, discoveredPrint, "pointer"));
@@ -145,7 +145,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fromDiscoveredPrint
 }
 
 
-JNIEXPORT jlong JNICALL Java_jfprint_PrintData_getDriverId
+JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDriverId
   (JNIEnv *env, jobject obj)
 {
 //    fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -155,7 +155,7 @@ JNIEXPORT jlong JNICALL Java_jfprint_PrintData_getDriverId
 }
 
 
-JNIEXPORT jlong JNICALL Java_jfprint_PrintData_getDevtype
+JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDevtype
   (JNIEnv *env, jobject obj)
 {
 //    fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));

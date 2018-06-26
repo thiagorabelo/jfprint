@@ -1,6 +1,7 @@
 package jfprint.base;
 
 import java.io.Closeable;
+import jfprint.exception.ResourceAlreadyClosedException;
 
 /**
  *
@@ -11,6 +12,13 @@ public abstract class NativeResource implements Closeable {
     private boolean closed = false;
 
     protected abstract void clearResources();
+
+
+    protected void check() {
+        if (closed) {
+            throw new ResourceAlreadyClosedException(this.getClass());
+        }
+    }
 
 
     @Override

@@ -35,7 +35,7 @@ public class Device extends NativeResource {
 
 
     @Override
-    public void clearResources() {
+    protected void clearResources() {
         nativeClose();
         pointer.clear();
         pointer = null;
@@ -45,9 +45,22 @@ public class Device extends NativeResource {
     /**
      * Close a device.
      *
-     * Called by superclass's method "close()".
+     * Called by method "clearResources()".
      */
     private native void nativeClose();
+
+    private native Driver fp_getDriver();
+    private native int fp_getNumEnrollStages();
+    private native long fp_getDevType();
+    private native boolean fp_supportsPrintData(PrintData printData);
+    private native boolean fp_supportsDiscoveredPrint(DiscoveredPrint discoveredPrint);
+    private native boolean fp_supportsImaging();
+    private native boolean fp_supportsIdentification();
+    private native Img fp_imgCapture(boolean unconditional);
+    private native int fp_getImgWidth();
+    private native int fp_getImgHeight();
+    private native int fp_enrollFingerImg(Wrapper<PrintData> printDataWrapper, Wrapper<Img> imgWrapper);
+    private native int fp_verifyFingerImg(PrintData enrolled_print, Wrapper<Img> imgWrapper);
 
 
     /**
@@ -55,7 +68,10 @@ public class Device extends NativeResource {
      *
      * @return    the driver controlling the device.
      */
-    public native Driver getDriver();
+    public Driver getDriver() {
+        check();
+        return fp_getDriver();
+    }
 
 
     /**
@@ -63,7 +79,11 @@ public class Device extends NativeResource {
      *
      * @return    the number of enroll stages.
      */
-    public native int getNumEnrollStages();
+    public int getNumEnrollStages() {
+        check();
+        return fp_getNumEnrollStages();
+    }
+
 
 
     /**
@@ -71,7 +91,10 @@ public class Device extends NativeResource {
      *
      * @return    the devtype.
      */
-    public native long getDevType();
+    public long getDevType() {
+        check();
+        return fp_getDevType();
+    }
 
 
     /**
@@ -80,7 +103,10 @@ public class Device extends NativeResource {
      * @param
      * @return    {@code true} if the print is compatible with the device, {@code false} if not
      */
-    public native boolean supportsPrintData(PrintData printData);
+    public boolean supportsPrintData(PrintData printData) {
+        check();
+        return fp_supportsPrintData(printData);
+    }
 
 
     /**
@@ -89,7 +115,10 @@ public class Device extends NativeResource {
      * @param
      * @return    {@code true} if the print is compatible with the device, {@code false} if not
      */
-    public native boolean supportsDiscoveredPrint(DiscoveredPrint discoveredPrint);
+    public boolean supportsDiscoveredPrint(DiscoveredPrint discoveredPrint) {
+        check();
+        return fp_supportsDiscoveredPrint(discoveredPrint);
+    }
 
 
     /**
@@ -99,7 +128,10 @@ public class Device extends NativeResource {
      *            {@code false} if the device does not provide images
      *            to the host computer.
      */
-    public native boolean supportsImaging();
+    public boolean supportsImaging() {
+        check();
+        return fp_supportsImaging();
+    }
 
 
     /**
@@ -107,7 +139,10 @@ public class Device extends NativeResource {
      *
      * @return    {@code true} if the device is capable of identification, {@code false} otherwise.
      */
-    public native boolean supportsIdentification();
+    public boolean supportsIdentification() {
+        check();
+        return fp_supportsIdentification();
+    }
 
 
     /**
@@ -118,7 +153,10 @@ public class Device extends NativeResource {
      *            that either the unconditional flag was set but the device does not
      *            support this, or that the device does not support imaging.
      */
-    public native Img imgCapture(boolean unconditional);
+    public Img imgCapture(boolean unconditional) {
+        check();
+        return fp_imgCapture(unconditional);
+    }
 
 
     /**
@@ -127,7 +165,10 @@ public class Device extends NativeResource {
      * @return    the expected image width, or {@code 0} for variable,
      *            or {@code -1} for non-imaging devices.
      */
-    public native int getImgWidth();
+    public int getImgWidth() {
+        check();
+        return fp_getImgWidth();
+    }
 
 
     /**
@@ -136,7 +177,10 @@ public class Device extends NativeResource {
      * @return    the expected image height, or {@code 0} for variable,
      *            or {@code -1} for non-imaging devices.
      */
-    public native int getImgHeight();
+    public int getImgHeight() {
+        check();
+        return fp_getImgHeight();
+    }
 
 
     /**
@@ -145,7 +189,10 @@ public class Device extends NativeResource {
      * @param
      * @return   negative code on error, otherwise a code of {@code FP_ENROLL_???}.
      */
-    public native int enrollFingerImg(Wrapper<PrintData> printDataWrapper, Wrapper<Img> imgWrapper);
+    public int enrollFingerImg(Wrapper<PrintData> printDataWrapper, Wrapper<Img> imgWrapper) {
+        check();
+        return fp_enrollFingerImg(printDataWrapper, imgWrapper);
+    }
 
 
     /**
@@ -154,7 +201,10 @@ public class Device extends NativeResource {
      * @param
      * @return    negative code on error, otherwise a code of {@code FP_VERIFY_???}.
      */
-    public native int verifyFingerImg(PrintData enrolled_print, Wrapper<Img> imgWrapper);
+    public int verifyFingerImg(PrintData enrolled_print, Wrapper<Img> imgWrapper) {
+        check();
+        return fp_verifyFingerImg(enrolled_print, imgWrapper);
+    }
 
 
     /**

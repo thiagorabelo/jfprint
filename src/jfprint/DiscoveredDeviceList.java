@@ -10,6 +10,7 @@ import static java.lang.String.format;
  */
 public class DiscoveredDeviceList extends NativeResource {
 
+
     private ByteBuffer pointer;
     private int size;
 
@@ -18,29 +19,16 @@ public class DiscoveredDeviceList extends NativeResource {
     }
 
 
+    /**
+     * Close a device.
+     *
+     * Called by method "clearResources()".
+     */
     @Override
     protected void clearResources() {
         nativeClose();
         pointer.clear();
         pointer = null;
-    }
-
-
-    public int size() {
-        return size;
-    }
-
-
-    public DiscoveredDevice get(int index) {
-        if (size == 0) {
-            throw new ArrayIndexOutOfBoundsException("it is empty");
-        }
-
-        if (index >= size) {
-            throw new ArrayIndexOutOfBoundsException(format("%d out of interval [0, %d[", index, size));
-        }
-
-        return nativeGet(index);
     }
 
 
@@ -50,9 +38,17 @@ public class DiscoveredDeviceList extends NativeResource {
      * This function destroys the list and all discovered devices that it included,
      * so make sure you have opened your discovered device before freeing the list.
      *
-     * Called by superclass's method "close()".
+     * Called by method "clearResources()".
      */
     private native void nativeClose();
+
+    private native DiscoveredDevice fp_get(int index);
+    private static native DiscoveredDeviceList fp_dicoverDevices();
+
+
+    public int size() {
+        return size;
+    }
 
 
     /**
@@ -61,7 +57,19 @@ public class DiscoveredDeviceList extends NativeResource {
      * @param index
      * @return discovered device instance
      */
-    private native DiscoveredDevice nativeGet(int index);
+    public DiscoveredDevice get(int index) {
+        check();
+
+        if (size == 0) {
+            throw new ArrayIndexOutOfBoundsException("it is empty");
+        }
+
+        if (index >= size) {
+            throw new ArrayIndexOutOfBoundsException(format("%d out of interval [0, %d[", index, size));
+        }
+
+        return fp_get(index);
+    }
 
 
     /**
@@ -69,7 +77,9 @@ public class DiscoveredDeviceList extends NativeResource {
      *
      * @return    list of discovered devices. Must be freed with close() after use.
      */
-    public static native DiscoveredDeviceList dicoverDevices();
+    public static DiscoveredDeviceList dicoverDevices() {
+        return fp_dicoverDevices();
+    }
 
 
     /**

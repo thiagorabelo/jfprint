@@ -15,14 +15,14 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredDeviceList_nativeClose
 }
 
 
-JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_nativeGet
+JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1get
   (JNIEnv *env, jobject obj, jint index)
 {
     return Util::DiscoveredList::nativeGet<fp_dscv_dev>(env, obj, index, "Ljfprint/DiscoveredDevice;", "discovered_devs");
 }
 
 
-JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_dicoverDevices
+JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1dicoverDevices
   (JNIEnv *env, jclass cls)
 {
     return Util::DiscoveredList::discoverPrints<fp_dscv_dev>(env, cls, "DiscoveredDeviceList", fp_discover_devs);

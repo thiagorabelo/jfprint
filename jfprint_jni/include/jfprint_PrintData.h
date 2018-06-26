@@ -37,66 +37,66 @@ JNIEXPORT void JNICALL Java_jfprint_PrintData_nativeClose
 
 /*
  * Class:     jfprint_PrintData
- * Method:    getData
+ * Method:    fp_getData
  * Signature: ()[B
  */
-JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_getData
+JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_fp_1getData
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_PrintData
- * Method:    fromData
+ * Method:    fp_fromData
  * Signature: ([B)Ljfprint/PrintData;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fromData
+JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
   (JNIEnv *, jclass, jbyteArray);
 
 /*
  * Class:     jfprint_PrintData
- * Method:    dataSave
+ * Method:    fp_dataSave
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_jfprint_PrintData_dataSave
+JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1dataSave
   (JNIEnv *, jobject, jint);
 
 /*
  * Class:     jfprint_PrintData
- * Method:    dataLoad
+ * Method:    fp_dataLoad
  * Signature: (Ljfprint/Device;I)Ljfprint/PrintData;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_PrintData_dataLoad
+JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1dataLoad
   (JNIEnv *, jclass, jobject, jint);
 
 /*
  * Class:     jfprint_PrintData
- * Method:    delete
+ * Method:    fp_delete
  * Signature: (Ljfprint/Device;I)I
  */
-JNIEXPORT jint JNICALL Java_jfprint_PrintData_delete
+JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1delete
   (JNIEnv *, jclass, jobject, jint);
 
 /*
  * Class:     jfprint_PrintData
- * Method:    fromDiscoveredPrint
+ * Method:    fp_fromDiscoveredPrint
  * Signature: (Ljfprint/DiscoveredPrint;)Ljfprint/PrintData;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fromDiscoveredPrint
+JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromDiscoveredPrint
   (JNIEnv *, jclass, jobject);
 
 /*
  * Class:     jfprint_PrintData
- * Method:    getDriverId
+ * Method:    fp_getDriverId
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_jfprint_PrintData_getDriverId
+JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDriverId
   (JNIEnv *, jobject);
 
 /*
  * Class:     jfprint_PrintData
- * Method:    getDevtype
+ * Method:    fp_getDevtype
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_jfprint_PrintData_getDevtype
+JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDevtype
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

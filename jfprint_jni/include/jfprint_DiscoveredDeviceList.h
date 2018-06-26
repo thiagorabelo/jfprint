@@ -17,18 +17,18 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredDeviceList_nativeClose
 
 /*
  * Class:     jfprint_DiscoveredDeviceList
- * Method:    nativeGet
+ * Method:    fp_get
  * Signature: (I)Ljfprint/DiscoveredDevice;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_nativeGet
+JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1get
   (JNIEnv *, jobject, jint);
 
 /*
  * Class:     jfprint_DiscoveredDeviceList
- * Method:    dicoverDevices
+ * Method:    fp_dicoverDevices
  * Signature: ()Ljfprint/DiscoveredDeviceList;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_dicoverDevices
+JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1dicoverDevices
   (JNIEnv *, jclass);
 
 #ifdef __cplusplus

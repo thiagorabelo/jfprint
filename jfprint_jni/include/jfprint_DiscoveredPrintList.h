@@ -17,18 +17,18 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredPrintList_nativeClose
 
 /*
  * Class:     jfprint_DiscoveredPrintList
- * Method:    nativeGet
+ * Method:    fp_get
  * Signature: (I)Ljfprint/DiscoveredPrint;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_nativeGet
+JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1get
   (JNIEnv *, jobject, jint);
 
 /*
  * Class:     jfprint_DiscoveredPrintList
- * Method:    discoverPrints
+ * Method:    fp_discoverPrints
  * Signature: ()Ljfprint/DiscoveredPrintList;
  */
-JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_discoverPrints
+JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1discoverPrints
   (JNIEnv *, jclass);
 
 #ifdef __cplusplus
