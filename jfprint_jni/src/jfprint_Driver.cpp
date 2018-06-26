@@ -20,8 +20,7 @@ JNIEXPORT void JNICALL Java_jfprint_Driver_nativeClose
 JNIEXPORT jstring JNICALL Java_jfprint_Driver_getName
   (JNIEnv *env, jobject obj)
 {
-    fp_driver **driver = reinterpret_cast<fp_driver**>(Util::getPointerAddress(env, obj, "pointer"));
-    const char *name = fp_driver_get_name(*driver);
+    const char *name = Util::applyFuncToPointer<const char*, fp_driver>(env, obj, "pointer", fp_driver_get_name);
     return env->NewStringUTF(name);
 }
 
@@ -29,14 +28,7 @@ JNIEXPORT jstring JNICALL Java_jfprint_Driver_getName
 JNIEXPORT jstring JNICALL Java_jfprint_Driver_getFullName
   (JNIEnv *env, jobject obj)
 {
-    fp_driver **driver = reinterpret_cast<fp_driver**>(Util::getPointerAddress(env, obj, "pointer"));
-    if (NULL == driver || NULL == *driver) {
-        log("The driver is NULL", __FILE__, ":", __LINE__);
-        return NULL;
-    }
-
-    const char *name = fp_driver_get_full_name(*driver);
-    log(__FILE__, ":", __LINE__, " The full name is: ", name, "\n");
+    const char *name = Util::applyFuncToPointer<const char*, fp_driver>(env, obj, "pointer", fp_driver_get_full_name);
     return env->NewStringUTF(name);
 }
 
@@ -44,7 +36,5 @@ JNIEXPORT jstring JNICALL Java_jfprint_Driver_getFullName
 JNIEXPORT jlong JNICALL Java_jfprint_Driver_getDriverID
   (JNIEnv *env, jobject obj)
 {
-    fp_driver **driver = reinterpret_cast<fp_driver**>(Util::getPointerAddress(env, obj, "pointer"));
-    jlong driver_id = static_cast<jlong>(fp_driver_get_driver_id(*driver));
-    return driver_id;
+    return Util::applyFuncToPointer<jlong, fp_driver>(env, obj, "pointer", fp_driver_get_driver_id);
 }

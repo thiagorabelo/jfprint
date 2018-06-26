@@ -30,7 +30,9 @@ public class PrintData extends NativeResource {
 
     @Override
     protected void clearResources() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        nativeClose();
+        pointer.clear();
+        pointer = null;
     }
 
 

@@ -18,7 +18,7 @@ public class Img extends NativeResource {
 
     @Override
     protected void clearResources() {
-        //nativeClose();
+        nativeClose();
         pointer.clear();
         pointer = null;
     }

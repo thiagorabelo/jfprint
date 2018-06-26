@@ -19,6 +19,7 @@ public class Driver extends NativeResource {
 
     @Override
     protected void clearResources() {
+        nativeClose();
         pointer.clear();
         pointer = null;
     }

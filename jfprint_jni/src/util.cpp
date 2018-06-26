@@ -7,25 +7,23 @@ namespace Util {
 		jclass cls = env->GetObjectClass(obj);
 
         if (NULL == cls) {
-			log("Can not access class. ", __FILE__, ":", __LINE__);
+			log("Can not access class. " LOCATION_INFO);
 			return NULL;
 		}
 
 		jfieldID pointerId = env->GetFieldID(cls, fieldName, "Ljava/nio/ByteBuffer;");
-
 		if (NULL == pointerId) {
-			log("Can not access field ID 'pointer'. ", __FILE__, ":", __LINE__);
+			log("Can not access field ID 'pointer'. " LOCATION_INFO);
 			return NULL;
 		}
 
-		jobject buffer = env->GetObjectField(obj, pointerId);
-
-		if (NULL == buffer) {
-			log("Can not access field 'buffer'. ", __FILE__, ":", __LINE__);
+		jobject pointer = env->GetObjectField(obj, pointerId);
+		if (NULL == pointer) {
+			log("Can not access field 'pointer'. " LOCATION_INFO);
 			return NULL;
 		}
 
-		return static_cast<void**>(env->GetDirectBufferAddress(buffer));
+		return static_cast<void**>(env->GetDirectBufferAddress(pointer));
 	}
 
 

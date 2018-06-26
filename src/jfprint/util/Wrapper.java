@@ -2,12 +2,13 @@ package jfprint.util;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import jfprint.base.NativeResource;
 
 /**
  *
  * @author thiago
  */
-public class Wrapper<T> {
+public class Wrapper<T extends NativeResource> {
 
     T obj;
 
@@ -42,9 +43,16 @@ public class Wrapper<T> {
     }
 
 
-    public void ifPresent(Consumer<T> consumer) {
+    public Wrapper<T> ifPresent(Consumer<T> consumer) {
         if (obj != null) {
             consumer.accept(obj);
+        }
+        return this;
+    }
+
+    public void closeIfPresent() {
+        if (obj != null) {
+            obj.close();
         }
     }
 }

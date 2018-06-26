@@ -156,13 +156,13 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_enrollFingerImg
         return Util::throwException(env, "Can not access wrapperImgCls. " LOCATION_INFO);
     }
 
-    jfieldID wrapperPrintDataObjField = env->GetFieldID(wrapperPrintDataCls, "obj", "Ljava/lang/Object;");
+    jfieldID wrapperPrintDataObjField = env->GetFieldID(wrapperPrintDataCls, "obj", "Ljfprint/base/NativeResource;");
     if (NULL == wrapperPrintDataObjField) {
         log("Can not access wrapperPrintDataCls. " LOCATION_INFO);
         return Util::throwException(env, "Can not access wrapperPrintDataCls. " LOCATION_INFO);
     }
 
-    jfieldID wrapperImgObjField = env->GetFieldID(wrapperImgCls, "obj", "Ljava/lang/Object;");
+    jfieldID wrapperImgObjField = env->GetFieldID(wrapperImgCls, "obj", "Ljfprint/base/NativeResource;");
     if (NULL == wrapperImgObjField) {
         log("Can not access wrapperImgCls. " LOCATION_INFO);
         return Util::throwException(env, "Can not access wrapperImgCls. " LOCATION_INFO);
@@ -207,7 +207,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_verifyFingerImg
         return Util::throwException(env, "Can not access wrapperImgCls. " LOCATION_INFO);
     }
 
-    jfieldID wrapperImgObjField = env->GetFieldID(wrapperImgCls, "obj", "Ljava/lang/Object;");
+    jfieldID wrapperImgObjField = env->GetFieldID(wrapperImgCls, "obj", "Ljfprint/base/NativeResource;");
     if (NULL == wrapperImgObjField) {
         log("Can not access wrapperImgCls. " LOCATION_INFO);
         return Util::throwException(env, "Can not access wrapperImgCls. " LOCATION_INFO);
@@ -230,6 +230,8 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_verifyFingerImg
     *p_img = img;
 
     Util::setPointerAddress(env, jimg, "pointer", p_img, sizeof(fp_img*));
+
+    env->SetObjectField(imgWrapper, wrapperImgObjField, jimg);
 
     return ret;
 }
