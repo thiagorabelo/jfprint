@@ -1,3 +1,4 @@
 nbprject/private/private.xml
 **/build/**
 **/dist/**
+.directory
