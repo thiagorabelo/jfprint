@@ -27,7 +27,7 @@ public class Img extends NativeResource {
     /**
      * Frees an image.
      *
-     * Called by superclass's method "close()".
+     * Called by method "clearResources()".
      */
     private native void nativeClose();
 

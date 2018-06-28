@@ -1,5 +1,15 @@
 #include "util.h"
 
+
+#define NATIVE_EXCEPTION "Ljfprint/exception/NativeException;"
+#define NATIVE_EXCEPTION_CONSTRUCTOR "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
+#define CLASS_NATIVE_EXCEPTION "Ljfprint/exception/ClassNativeException;"
+#define CLASS_NATIVE_EXCEPTION_CONSTRUCTOR "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
+#define NATIVE_CAN_NOT_FIND_EXCEPTION "Ljfprint/exception/NativeCanNotFindException;"
+#define NATIVE_CAN_NOT_FIND_EXCEPTION_CONSTRUCTOR "(Ljava/lang/String;)V"
+#define EXCEPTION "Ljava/lang/Exception;"
+
+
 namespace Util {
 
     void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName)
@@ -7,19 +17,22 @@ namespace Util {
 		jclass cls = env->GetObjectClass(obj);
 
         if (NULL == cls) {
-			log("Can not access class. " LOCATION_INFO);
+			err("Can not access class. " LOCATION_INFO);
+            Util::throwException(env, "Can not access class. " LOCATION_INFO);
 			return NULL;
 		}
 
 		jfieldID pointerId = env->GetFieldID(cls, fieldName, "Ljava/nio/ByteBuffer;");
 		if (NULL == pointerId) {
-			log("Can not access field ID 'pointer'. " LOCATION_INFO);
+			err("Can not access field ID 'pointer'. " LOCATION_INFO);
+            Util::throwException(env, "Can not access field ID 'pointer'. " LOCATION_INFO);
 			return NULL;
 		}
 
 		jobject pointer = env->GetObjectField(obj, pointerId);
 		if (NULL == pointer) {
-			log("Can not access field 'pointer'. " LOCATION_INFO);
+			err("Can not access field 'pointer'. " LOCATION_INFO);
+            Util::throwException(env, "Can not access field 'pointer'. " LOCATION_INFO);
 			return NULL;
 		}
 
@@ -33,7 +46,7 @@ namespace Util {
         jfieldID pointerId = env->GetFieldID(cls,  fieldName, "Ljava/nio/ByteBuffer;");
 
         if (NULL == pointerId) {
-            log("Can not find 'pointerId'. " LOCATION_INFO);
+            err("Can not find 'pointerId'. " LOCATION_INFO);
             Util::throwException(env, "Can not find 'pointerId'. " LOCATION_INFO);
             return NULL;
         }
@@ -56,7 +69,8 @@ namespace Util {
         jclass cls = env->FindClass(clsDescription);
 
         if (NULL == cls) {
-            log("Can not find class ", clsDescription);
+            err("Can not find class ", clsDescription);
+            Util::throwException(env, NATIVE_CAN_NOT_FIND_EXCEPTION, clsDescription);
             return NULL;
         }
 
@@ -69,7 +83,8 @@ namespace Util {
         jmethodID midInit = env->GetMethodID(cls, "<init>", "()V");
 
         if (NULL == midInit) {
-            log("Can not find method initializer.");
+            err("Can not find method initializer ()V.");
+            Util::throwException(env, NATIVE_CAN_NOT_FIND_EXCEPTION, "Can not find method initializer ()V.");
             return NULL;
         }
 
@@ -80,7 +95,40 @@ namespace Util {
 
     jint throwException(JNIEnv *env, const char *message)
     {
-        jclass excp = env->FindClass("Ljava/lang/Exception;");
-        return env->ThrowNew(excp, message);
+        return Util::throwException(env, EXCEPTION, message);
+    }
+
+    jint throwException(JNIEnv *env, const char *clsName, const char *message)
+    {
+        jclass cls = env->FindClass(clsName);
+        return env->ThrowNew(cls, message);
+    }
+
+    jint throwNativeException(JNIEnv *env, const char *message, const char *funcName, const char *locationInfo)
+    {
+        jstring jmessage = env->NewStringUTF(message);
+        jstring jfuncName = env->NewStringUTF(funcName);
+        jstring jlocationInfo = env->NewStringUTF(locationInfo);
+
+        jclass cls = env->FindClass(NATIVE_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(cls, "<init>", NATIVE_EXCEPTION_CONSTRUCTOR);
+
+        jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, jmessage, jfuncName, jlocationInfo));
+
+        return env->Throw(excpt);
+    }
+
+    jint throwNativeException(JNIEnv *env, jclass cls, const char *message, const char *funcName, const char *locationInfo)
+    {
+        jstring jmessage = env->NewStringUTF(message);
+        jstring jfuncName = env->NewStringUTF(funcName);
+        jstring jlocationInfo = env->NewStringUTF(locationInfo);
+
+        jclass excls = env->FindClass(CLASS_NATIVE_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(excls, "<init>", CLASS_NATIVE_EXCEPTION_CONSTRUCTOR);
+
+        jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(excls, cttr, cls, jmessage, jfuncName, jlocationInfo));
+
+        return env->Throw(excpt);
     }
 }

@@ -8,7 +8,6 @@ import jfprint.DiscoveredDevice;
 import jfprint.Driver;
 import jfprint.Img;
 import jfprint.PrintData;
-import jfprint.util.Consumer;
 import jfprint.util.Wrapper;
 
 /**

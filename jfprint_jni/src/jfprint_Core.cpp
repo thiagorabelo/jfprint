@@ -11,7 +11,6 @@ JNIEXPORT jint JNICALL Java_jfprint_Core_fp_1init
   (JNIEnv *env, jclass cls)
 {
     int ret_code = fp_init();
-
     log("libfprint initialized.\n");
 
     return (int)ret_code;

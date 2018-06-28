@@ -9,16 +9,16 @@ import java.nio.ByteBuffer;
  */
 public class PrintData extends NativeResource {
 
-    private static final int LEFT_THUMB = 1; /** thumb (left hand) */
-	private static final int LEFT_INDEX = 2; /** index finger (left hand) */
-	private static final int LEFT_MIDDLE = 3; /** middle finger (left hand) */
-	private static final int LEFT_RING = 4; /** ring finger (left hand) */
-	private static final int LEFT_LITTLE = 5; /** little finger (left hand) */
-	private static final int RIGHT_THUMB = 6; /** thumb (right hand) */
-	private static final int RIGHT_INDEX = 7; /** index finger (right hand) */
-	private static final int RIGHT_MIDDLE = 8; /** middle finger (right hand) */
-	private static final int RIGHT_RING = 9; /** ring finger (right hand) */
-	private static final int RIGHT_LITTLE = 10; /** little finger (right hand) */
+    private static final int LEFT_THUMB = 1;    // thumb (left hand)
+	private static final int LEFT_INDEX = 2;    // index finger (left hand)
+	private static final int LEFT_MIDDLE = 3;   // middle finger (left hand)
+	private static final int LEFT_RING = 4;     // ring finger (left hand)
+	private static final int LEFT_LITTLE = 5;   // little finger (left hand)
+	private static final int RIGHT_THUMB = 6;   // thumb (right hand)
+	private static final int RIGHT_INDEX = 7;   // index finger (right hand)
+	private static final int RIGHT_MIDDLE = 8;  // middle finger (right hand)
+	private static final int RIGHT_RING = 9;    // ring finger (right hand)
+	private static final int RIGHT_LITTLE = 10; // little finger (right hand)
 
 
     private ByteBuffer pointer;
@@ -36,7 +36,11 @@ public class PrintData extends NativeResource {
     }
 
 
-    // Frees a stored print.
+    /**
+     * Frees a stored print.
+     *
+     * Called by method "clearResources()".
+     */
     private native void nativeClose();
 
     private native byte [] fp_getData();

@@ -25,5 +25,5 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1get
 JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1discoverPrints
   (JNIEnv *env, jclass cls)
 {
-    return Util::DiscoveredList::discoverPrints<fp_dscv_print>(env, cls, "DiscoveredPrintList", fp_discover_prints);
+    return Util::DiscoveredList::discover<fp_dscv_print>(env, cls, fp_discover_prints);
 }

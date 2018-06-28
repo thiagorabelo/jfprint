@@ -24,9 +24,8 @@ public class DiscoveredDevice extends NativeResource {
 
 
     /**
-     * Close a device.
-     *
      * Called by method "clearResources()".
+     * 
      */
     private native void nativeClose();
 

@@ -19,11 +19,6 @@ public class DiscoveredDeviceList extends NativeResource {
     }
 
 
-    /**
-     * Close a device.
-     *
-     * Called by method "clearResources()".
-     */
     @Override
     protected void clearResources() {
         nativeClose();

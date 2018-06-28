@@ -13,8 +13,8 @@ JNIEXPORT void JNICALL Java_jfprint_Device_nativeClose
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (NULL == dev) {
-        log("Can not access device 'pointer'. ", LOCATION_INFO);
-        Util::throwException(env, "Can not access device 'pointer' in function Java_jfprint_Device_nativeClose.");
+        err("Can not access device 'pointer'. ", LOCATION_INFO);
+        Util::throwNativeException(env, "Can not access device 'pointer'.", __PRETTY_FUNCTION__, LOCATION_INFO);
         return;
     }
 
@@ -29,6 +29,13 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1getDriver
   (JNIEnv *env, jobject obj)
 {
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
+
+    if (NULL == dev) {
+        err("Can not access device 'pointer'. ", LOCATION_INFO);
+        Util::throwNativeException(env, "Can not access device 'pointer'.", __PRETTY_FUNCTION__, LOCATION_INFO);
+        return NULL;
+    }
+
     fp_driver *driver = fp_dev_get_driver(*dev);
     fp_driver **pdriver = new fp_driver*;
 
@@ -108,7 +115,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
             fp_img_free(img);
         }
 
-        log("Can not capture image from device. Code error: ", ret, ". ", LOCATION_INFO);
+        err("Can not capture image from device. Code error: ", ret, ". ", LOCATION_INFO);
         Util::throwException(env, "Can not capture image from device. " LOCATION_INFO);
 
         return NULL;

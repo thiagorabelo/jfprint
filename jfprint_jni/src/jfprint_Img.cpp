@@ -56,8 +56,8 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1saveToFile
 {
     char *cpath = const_cast<char*>(env->GetStringUTFChars(path, NULL));
     if (NULL == cpath) {
-        log("Can not access cpath on. " LOCATION_INFO);
-        return Util::throwException(env, "Can not access the path on JNI. " LOCATION_INFO);
+        err("Can not access cpath on. " LOCATION_INFO);
+        return Util::throwNativeException(env, "Can not access the path on JNI. ", __PRETTY_FUNCTION__, LOCATION_INFO);
     }
 
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
@@ -84,8 +84,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_Img_fp_1binarize
     *p_img2 = fp_img_binarize(*p_img);
 
     if (NULL == *p_img2) {
-        log("Can not generate binarized image. " LOCATION_INFO);
-        Util::throwException(env, "Can not generate binarized image. " LOCATION_INFO);
+        err("Can not generate binarized image. " LOCATION_INFO);
+        Util::throwNativeException(env, "Can not generate binarized image. ", __PRETTY_FUNCTION__, LOCATION_INFO);
         delete p_img2;
         return NULL;
     }

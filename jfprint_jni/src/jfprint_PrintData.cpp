@@ -27,8 +27,8 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_fp_1getData
     size_t array_size = fp_print_data_get_data(*print_data, &data);
 
     if (NULL == data) {
-        log("Can not access print data. " LOCATION_INFO);
-        Util::throwException(env, "Can not access print data. " LOCATION_INFO);
+        err("Can not access print data. " LOCATION_INFO);
+        Util::throwNativeException(env, "Can not access print data. ", __PRETTY_FUNCTION__, LOCATION_INFO);
         return NULL;
     }
 
@@ -46,8 +46,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
     jsize jArraySize = env->GetArrayLength(jdata);
 
     if (jArraySize <= 0) {
-        log("Array is empty. " LOCATION_INFO);
-        Util::throwException(env, "Array is empty. " LOCATION_INFO);
+        err("Array is empty. " LOCATION_INFO);
+        Util::throwNativeException(env, "Array is empty. ", __PRETTY_FUNCTION__, LOCATION_INFO);
         return NULL;
     }
 
@@ -55,14 +55,14 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
     env->GetByteArrayRegion(jdata, 0, jArraySize, buf);
 
     if (env->ExceptionCheck()) {
-        log("ArrayIndexOutOfBoundsException on copy of jByteArray. " LOCATION_INFO);
+        err("ArrayIndexOutOfBoundsException on copy of jByteArray. " LOCATION_INFO);
         return NULL;
     }
 
     fp_print_data *print_data = fp_print_data_from_data(reinterpret_cast<unsigned char*>(buf), static_cast<size_t>(jArraySize));
     if (NULL == print_data) {
-        log("fp_print_data_from_data returned NULL. " LOCATION_INFO);
-        Util::throwException(env, "fp_print_data_from_data returned NULL. " LOCATION_INFO);
+        err("fp_print_data_from_data returned NULL. " LOCATION_INFO);
+        Util::throwNativeException(env, "fp_print_data_from_data returned NULL. ", __PRETTY_FUNCTION__, LOCATION_INFO);
         return NULL;
     }
 
@@ -96,8 +96,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1dataLoad
     int ret = fp_print_data_load(*dev, static_cast<fp_finger>(finger), &print_data);
 
     if (ret != 0) {
-        log("Can not load fp_print_data. " LOCATION_INFO);
-        Util::throwException(env, "Can not load fp_print_data. " LOCATION_INFO);
+        err("Can not load fp_print_data. " LOCATION_INFO);
+        Util::throwNativeException(env, "Can not load fp_print_data. ", __PRETTY_FUNCTION__, LOCATION_INFO);
         return NULL;
     }
 
@@ -129,8 +129,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromDiscoveredPrint
     int ret = fp_print_data_from_dscv_print(*discovered_print, &data);
 
     if (0 != ret) {
-        log("Error while obtaining print data from discovered print. " LOCATION_INFO);
-        Util::throwException(env, "Error while obtaining print data from discovered print. " LOCATION_INFO);
+        err("Error while obtaining print data from discovered print. " LOCATION_INFO);
+        Util::throwNativeException(env, "Error while obtaining print data from discovered print. ", __PRETTY_FUNCTION__, LOCATION_INFO);
         return NULL;
     }
 

@@ -25,5 +25,5 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1get
 JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1dicoverDevices
   (JNIEnv *env, jclass cls)
 {
-    return Util::DiscoveredList::discoverPrints<fp_dscv_dev>(env, cls, "DiscoveredDeviceList", fp_discover_devs);
+    return Util::DiscoveredList::discover<fp_dscv_dev>(env, cls, fp_discover_devs);
 }

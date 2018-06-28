@@ -16,11 +16,6 @@ public class DiscoveredPrint extends NativeResource {
     }
 
 
-    /**
-     * Close a device.
-     *
-     * Called by method "clearResources()".
-     */
     @Override
     protected void clearResources() {
         nativeClose();
@@ -29,6 +24,10 @@ public class DiscoveredPrint extends NativeResource {
     }
 
 
+    /**
+     * Called by method "clearResources()".
+     * 
+     */
     private native void nativeClose();
 
     private native int fp_getDriverId();

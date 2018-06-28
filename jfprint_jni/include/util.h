@@ -21,25 +21,28 @@ extern "C" {
 #define  _TOSTR(i) __TOSTR(i)
 #define LOCATION_INFO __FILE__ ":" _TOSTR(__LINE__)
 
-#ifdef DEBUG
 
 template<typename T>
-void __log(T const& t)
+static void __log(std::ostream &stream, T const& t)
 {
-	std::cout << t;
+	stream << t;
 }
 
 
 template <typename T, typename... Ts>
-void __log(T t, Ts const&... ts)
+static void __log(std::ostream &stream, T t, Ts const&... ts)
 {
-	std::cout << t;
-	__log(ts...);
-	std::cout << std::endl;
+	stream << t;
+	__log(stream, ts...);
+	stream << std::endl;
 }
 
-#define log(head, ...) __log(head, ##__VA_ARGS__);
 
+#define err(head, ...) __log(std::cerr, head, ##__VA_ARGS__);
+
+
+#ifdef DEBUG
+#define log(head, ...) __log(std::cout, head, ##__VA_ARGS__);
 #else
 #define log(x, ...)
 #endif
@@ -60,10 +63,14 @@ namespace Util {
 	extern jobject newInstance(JNIEnv *env, jclass cls);
 
 	extern jint throwException(JNIEnv *env, const char *message);
+	extern jint throwException(JNIEnv *env, const char *clsName, const char *message);
+	extern jint throwException(JNIEnv *env, jclass cls, const char *message);
+	extern jint throwNativeException(JNIEnv *env, const char *message, const char *funcName, const char *locationInfo);
+	extern jint throwNativeException(JNIEnv *env, jclass cls, const char *message, const char *funcName, const char *locationInfo);
+
 
 
 	namespace DiscoveredList {
-
 
 		template<typename T>
 		size_t getDiscoveredListSize(T **nullTerminatedList)
@@ -89,8 +96,8 @@ namespace Util {
 		  DiscoveredType **discovereds = reinterpret_cast<DiscoveredType**>(Util::getPointerAddress(env, obj, "pointer"));
 
 		  if (NULL == discovereds) {
-			  log(discoveredsName, " is empty. " LOCATION_INFO);
-			  Util::throwException(env, "Can not retrieve discovered items. " LOCATION_INFO);
+			  err(discoveredsName, " is empty. " LOCATION_INFO);
+			  Util::throwNativeException(env, "Can not retrieve discovered items. ", __PRETTY_FUNCTION__, LOCATION_INFO);
 			  return NULL;
 		  }
 
@@ -117,12 +124,12 @@ namespace Util {
 		 * @return
 		 */
 		template <typename DiscoveredType, typename DiscoverFunc>
-		jobject discoverPrints(JNIEnv *env, jclass cls, const char *ClassName, DiscoverFunc fn)
+		jobject discover(JNIEnv *env, jclass cls, DiscoverFunc fn)
 		{
 			jfieldID fidSize = env->GetFieldID(cls, "size", "I");
 			if (NULL == fidSize) {
-				log("Can not access ", ClassName, " attribute 'size'. ", __FILE__, ":", __LINE__);
-				Util::throwException(env, "Can not access size field (" LOCATION_INFO ")");
+				err("Can not access attribute 'size'. " LOCATION_INFO);
+				Util::throwNativeException(env, cls, "Can not access 'size' field.", __PRETTY_FUNCTION__, LOCATION_INFO);
 				return NULL;
 			}
 
