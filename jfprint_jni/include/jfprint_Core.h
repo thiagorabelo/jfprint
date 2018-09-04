@@ -23,6 +23,14 @@ JNIEXPORT jint JNICALL Java_jfprint_Core_fp_1init
 JNIEXPORT void JNICALL Java_jfprint_Core_fp_1exit
   (JNIEnv *, jclass);
 
+/*
+ * Class:     jfprint_Core
+ * Method:    fp_set_debug
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_jfprint_Core_fp_1set_1debug
+  (JNIEnv *, jclass, jint);
+
 #ifdef __cplusplus
 }
 #endif

@@ -10,9 +10,13 @@ public class ClassNativeException extends NativeException {
 
     private Class cls;
 
+    public ClassNativeException(Throwable cause, Class cls, String msg, String funcName, String locationInfo) {
+        super(cause, msg, funcName, locationInfo);
+        this.cls = cls;
+    }
+
     public ClassNativeException(Class cls, String msg, String funcName, String locationInfo) {
         super(msg, funcName, locationInfo);
-
         this.cls = cls;
     }
 

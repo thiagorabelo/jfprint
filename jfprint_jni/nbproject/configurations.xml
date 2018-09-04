@@ -4,6 +4,15 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Arquivos de Cabeçalho"
                    projectFiles="true">
+      <itemPath>include/jfprint_Core.h</itemPath>
+      <itemPath>include/jfprint_Device.h</itemPath>
+      <itemPath>include/jfprint_DiscoveredDevice.h</itemPath>
+      <itemPath>include/jfprint_DiscoveredDeviceList.h</itemPath>
+      <itemPath>include/jfprint_DiscoveredPrint.h</itemPath>
+      <itemPath>include/jfprint_DiscoveredPrintList.h</itemPath>
+      <itemPath>include/jfprint_Driver.h</itemPath>
+      <itemPath>include/jfprint_Img.h</itemPath>
+      <itemPath>include/jfprint_PrintData.h</itemPath>
       <itemPath>include/util.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -80,6 +89,30 @@
           <commandLine>-Wl,--no-undefined</commandLine>
         </linkerTool>
       </compileType>
+      <item path="include/jfprint_Core.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_Device.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_DiscoveredDevice.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_DiscoveredDeviceList.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/jfprint_DiscoveredPrint.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_DiscoveredPrintList.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/jfprint_Driver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_Img.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_PrintData.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/util.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/jfprint_Core.cpp" ex="false" tool="1" flavor2="0">
@@ -152,6 +185,30 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="include/jfprint_Core.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_Device.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_DiscoveredDevice.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_DiscoveredDeviceList.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/jfprint_DiscoveredPrint.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_DiscoveredPrintList.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/jfprint_Driver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_Img.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/jfprint_PrintData.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/util.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/jfprint_Core.cpp" ex="false" tool="1" flavor2="0">

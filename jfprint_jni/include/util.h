@@ -21,11 +21,13 @@ extern "C" {
 #define  _TOSTR(i) __TOSTR(i)
 #define LOCATION_INFO __FILE__ ":" _TOSTR(__LINE__)
 
+#define FUNC_DESC __PRETTY_FUNCTION__
+
 
 template<typename T>
 static void __log(std::ostream &stream, T const& t)
 {
-	stream << t;
+	stream << t << std::endl;
 }
 
 
@@ -34,18 +36,18 @@ static void __log(std::ostream &stream, T t, Ts const&... ts)
 {
 	stream << t;
 	__log(stream, ts...);
-	stream << std::endl;
 }
 
 
-#define err(head, ...) __log(std::cerr, head, ##__VA_ARGS__);
+#define err(head, ...) __log(std::cerr, "NATIVE ERROR: ", head, ##__VA_ARGS__);
 
 
 #ifdef DEBUG
-#define log(head, ...) __log(std::cout, head, ##__VA_ARGS__);
+#define log(head, ...) __log(std::cout, "NATIVE: ", head, ##__VA_ARGS__);
 #else
 #define log(x, ...)
 #endif
+
 
 namespace Util {
 
@@ -62,12 +64,44 @@ namespace Util {
 	extern jobject newInstance(JNIEnv *env, const char *clsDescription);
 	extern jobject newInstance(JNIEnv *env, jclass cls);
 
-	extern jint throwException(JNIEnv *env, const char *message);
-	extern jint throwException(JNIEnv *env, const char *clsName, const char *message);
-	extern jint throwException(JNIEnv *env, jclass cls, const char *message);
-	extern jint throwNativeException(JNIEnv *env, const char *message, const char *funcName, const char *locationInfo);
-	extern jint throwNativeException(JNIEnv *env, jclass cls, const char *message, const char *funcName, const char *locationInfo);
+	inline jthrowable stopExceptionPropagation(JNIEnv *env)
+	{
+		jthrowable cause = env->ExceptionOccurred();
+		env->ExceptionClear();
+		return cause;
+	}
 
+	extern jint throwCodeError(JNIEnv *env, jint code);
+
+    extern jint throwException(JNIEnv *env, const char *message);
+    extern jint throwException(JNIEnv *env, const char *clsName, const char *message);
+
+    extern jint throwNativeException(JNIEnv *env,
+			                         const char *message, const char *funcName, const char *locationInfo);
+    extern jint throwNativeException(JNIEnv *env, jclass cls,
+                                     const char *message, const char *funcName, const char *locationInfo);
+	extern jint throwNativeException(JNIEnv *env, jobject obj,
+                                     const char *message, const char *funcName, const char *locationInfo);
+    extern jint throwNativeException(JNIEnv *env, jthrowable cause,
+                                     const char *message, const char *funcName, const char *locationInfo);
+    extern jint throwNativeException(JNIEnv *env, jthrowable cause, jobject obj,
+                                     const char *message, const char *funcName, const char *locationInfo);
+    extern jint throwNativeException(JNIEnv *env, jthrowable cause, jclass cls,
+                                     const char *message, const char *funcName, const char *locationInfo);
+
+
+	extern bool checkAndThrowException(JNIEnv *env,
+                                       const char *message, const char *locationInfo, const char *funcName);
+	extern bool checkAndThrowException(JNIEnv *env, jobject obj,
+                                       const char *message, const char *locationInfo, const char *funcName);
+	extern bool checkAndThrowException(JNIEnv *env, jclass cls,
+                                       const char *message, const char *locationInfo, const char *funcName);
+	extern bool checkAndThrowException(JNIEnv *env, void *to_verify,
+                                       const char *message, const char *locationInfo, const char *funcName);
+	extern bool checkAndThrowException(JNIEnv *env, void *to_verify, jclass cls,
+                                       const char *message, const char *locationInfo, const char *funcName);
+	extern bool checkAndThrowException(JNIEnv *env, void *to_verify, jobject obj,
+                                       const char *message, const char *locationInfo, const char *funcName);
 
 
 	namespace DiscoveredList {
@@ -91,13 +125,12 @@ namespace Util {
 
 
 		template<typename DiscoveredType>
-		jobject nativeGet(JNIEnv *env, jobject obj, jint index, const char *clsName, const char *discoveredsName)
+		jobject nativeGet(JNIEnv *env, jobject obj, jint index, const char *clsName)
 		{
 		  DiscoveredType **discovereds = reinterpret_cast<DiscoveredType**>(Util::getPointerAddress(env, obj, "pointer"));
 
-		  if (NULL == discovereds) {
-			  err(discoveredsName, " is empty. " LOCATION_INFO);
-			  Util::throwNativeException(env, "Can not retrieve discovered items. ", __PRETTY_FUNCTION__, LOCATION_INFO);
+		  if (NULL == discovereds || env->ExceptionCheck()) {
+			  err("Can not access object 'pointer' - " LOCATION_INFO ", ", FUNC_DESC);
 			  return NULL;
 		  }
 
@@ -108,7 +141,18 @@ namespace Util {
 		  DiscoveredType **p_discovered = &discovereds[index];
 
 		  jobject jdicovered = Util::newInstance(env, clsName);
+
+		  if (NULL == jdicovered || env->ExceptionCheck()) {
+			  err("Error while creating new object instance - ", LOCATION_INFO ", ", FUNC_DESC);
+			  return NULL;
+		  }
+
 		  Util::setPointerAddress(env, jdicovered, "pointer", p_discovered, sizeof(DiscoveredType*));
+
+		  if (env->ExceptionCheck()) {
+			  err("Can not set object 'pointer' - " LOCATION_INFO ", ", FUNC_DESC);
+			  return NULL;
+		  }
 
 		  return jdicovered;
 		}
@@ -128,8 +172,13 @@ namespace Util {
 		{
 			jfieldID fidSize = env->GetFieldID(cls, "size", "I");
 			if (NULL == fidSize) {
-				err("Can not access attribute 'size'. " LOCATION_INFO);
-				Util::throwNativeException(env, cls, "Can not access 'size' field.", __PRETTY_FUNCTION__, LOCATION_INFO);
+				err("Can not access attribute 'size' - " LOCATION_INFO ", ", FUNC_DESC);
+				return NULL;
+			}
+
+			jobject jdiscovered_list = Util::newInstance(env, cls);
+			if (NULL ==jdiscovered_list || env->ExceptionCheck()) {
+				err("Error while creating new object instance - " LOCATION_INFO ", ", FUNC_DESC);
 				return NULL;
 			}
 
@@ -138,10 +187,19 @@ namespace Util {
 			DiscoveredType **discovereds = fn();
 			size_t size = Util::DiscoveredList::getDiscoveredListSize(discovereds);
 
-			jobject jdiscovered_list = Util::newInstance(env, cls);
-
 			Util::setPointerAddress(env, jdiscovered_list, "pointer", discovereds, sizeof(DiscoveredType*));
+
+			if (env->ExceptionCheck()) {
+				err("Can not set discovered list 'pointer' attribute - " LOCATION_INFO ", ", FUNC_DESC);
+				return NULL;
+			}
+
 			env->SetIntField(jdiscovered_list, fidSize, static_cast<int>(size));
+
+			if (env->ExceptionCheck()) {
+				err("Can not set discovered list 'size' attribute - " LOCATION_INFO ", ", FUNC_DESC);
+				return NULL;
+			}
 
 			return jdiscovered_list;
 		}
@@ -150,11 +208,17 @@ namespace Util {
 		void nativeClose(JNIEnv *env, jobject obj, FreeFunc fn)
 		{
 			DiscoveredType **discovereds = reinterpret_cast<DiscoveredType**>(Util::getPointerAddress(env, obj, "pointer"));
+
+			if (NULL == discovereds || env->ExceptionCheck()) {
+				return;
+			}
+
 			// Do not freed the pointer to pointer.
 			// Let fprint do that.
 			fn(discovereds);
 		}
 	};
+
 };
 
 

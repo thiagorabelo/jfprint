@@ -8,6 +8,7 @@ import jfprint.DiscoveredDevice;
 import jfprint.Driver;
 import jfprint.Img;
 import jfprint.PrintData;
+import jfprint.exception.CodeError;
 import jfprint.util.Wrapper;
 
 /**
@@ -51,11 +52,16 @@ public class RunTests {
 
         try (Device dev = getDevice()) {
             if (dev != null) {
-                int ret;
+                int ret = 0;
                 Wrapper<Img> img = new Wrapper<>();
 
                 do {
-                    ret = dev.enrollFingerImg(pdata, img);
+                    try {
+                        ret = dev.enrollFingerImg(pdata, img);
+                    } catch (CodeError ex) {
+                        System.out.println("Enroll Code Error: " + ex.getCode());
+                        throw ex;
+                    }
 
                     switch (ret) {
                         case Device.FP_ENROLL_COMPLETE:
@@ -93,8 +99,14 @@ public class RunTests {
                     System.out.println("Lets' verify:");
 
                     Wrapper<Img> vimg = new Wrapper<>();
+                    int vret = 0;
 
-                    int vret = dev.verifyFingerImg(data, vimg);
+                    try {
+                        vret = dev.verifyFingerImg(data, vimg);
+                    } catch (CodeError ex) {
+                        System.out.println("Verify Code Error: " + ex.getCode());
+                        throw new RuntimeException(ex);
+                    }
 
                     System.out.println(format("Verifi status code: %d", vret));
 

@@ -18,6 +18,13 @@ public class NativeException extends RuntimeException {
         this.locationInfo = locationInfo;
     }
 
+    public NativeException(Throwable cause, String msg, String funcName, String locationInfo) {
+        super(msg, cause);
+
+        this.funcName = funcName;
+        this.locationInfo = locationInfo;
+    }
+
     @Override
     public String getMessage() {
         return format("%s. Native Info: %s %s", getOriginalMessage(), locationInfo, funcName);

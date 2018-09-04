@@ -18,7 +18,7 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredPrintList_nativeClose
 JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1get
   (JNIEnv *env, jobject obj, jint index)
 {
-    return Util::DiscoveredList::nativeGet<fp_dscv_print>(env, obj, index, "Ljfprint/DiscoveredPrint;", "discovered_prints");
+    return Util::DiscoveredList::nativeGet<fp_dscv_print>(env, obj, index, "Ljfprint/DiscoveredPrint;");
 }
 
 

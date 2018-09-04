@@ -13,6 +13,7 @@ public class Core {
 
     private static native int fp_init();
     private static native void fp_exit();
+    private static native void fp_set_debug(int level);
 
 
     //private static native void setDebug(int level);
@@ -40,5 +41,9 @@ public class Core {
      */
     public static void exit() {
         fp_exit();
+    }
+
+    public static void setDebug(int level) {
+        fp_set_debug(level);
     }
 }

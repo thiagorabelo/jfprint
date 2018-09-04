@@ -2,6 +2,7 @@ package jfprint;
 
 import jfprint.base.NativeResource;
 import java.nio.ByteBuffer;
+import jfprint.exception.CodeError;
 import jfprint.util.Wrapper;
 
 /**
@@ -56,11 +57,11 @@ public class Device extends NativeResource {
     private native boolean fp_supportsDiscoveredPrint(DiscoveredPrint discoveredPrint);
     private native boolean fp_supportsImaging();
     private native boolean fp_supportsIdentification();
-    private native Img fp_imgCapture(boolean unconditional);
+    private native Img fp_imgCapture(boolean unconditional) throws CodeError;
     private native int fp_getImgWidth();
     private native int fp_getImgHeight();
-    private native int fp_enrollFingerImg(Wrapper<PrintData> printDataWrapper, Wrapper<Img> imgWrapper);
-    private native int fp_verifyFingerImg(PrintData enrolled_print, Wrapper<Img> imgWrapper);
+    private native int fp_enrollFingerImg(Wrapper<PrintData> printDataWrapper, Wrapper<Img> imgWrapper) throws CodeError;
+    private native int fp_verifyFingerImg(PrintData enrolled_print, Wrapper<Img> imgWrapper) throws CodeError;
 
 
     /**
@@ -153,7 +154,7 @@ public class Device extends NativeResource {
      *            that either the unconditional flag was set but the device does not
      *            support this, or that the device does not support imaging.
      */
-    public Img imgCapture(boolean unconditional) {
+    public Img imgCapture(boolean unconditional) throws CodeError {
         check();
         return fp_imgCapture(unconditional);
     }
@@ -189,7 +190,7 @@ public class Device extends NativeResource {
      * @param
      * @return   negative code on error, otherwise a code of {@code FP_ENROLL_???}.
      */
-    public int enrollFingerImg(Wrapper<PrintData> printDataWrapper, Wrapper<Img> imgWrapper) {
+    public int enrollFingerImg(Wrapper<PrintData> printDataWrapper, Wrapper<Img> imgWrapper) throws CodeError {
         check();
         return fp_enrollFingerImg(printDataWrapper, imgWrapper);
     }
@@ -201,7 +202,7 @@ public class Device extends NativeResource {
      * @param
      * @return    negative code on error, otherwise a code of {@code FP_VERIFY_???}.
      */
-    public int verifyFingerImg(PrintData enrolled_print, Wrapper<Img> imgWrapper) {
+    public int verifyFingerImg(PrintData enrolled_print, Wrapper<Img> imgWrapper) throws CodeError {
         check();
         return fp_verifyFingerImg(enrolled_print, imgWrapper);
     }
