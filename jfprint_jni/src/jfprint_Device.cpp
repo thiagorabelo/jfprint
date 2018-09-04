@@ -256,7 +256,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
     }
 
     fp_print_data **enrolled_print = new fp_print_data*;
-    fp_img **img = new fp_img*; // TODO: Sobretudo essa
+    fp_img **img = new fp_img*;
 
     *enrolled_print = NULL;
     *img = NULL;
@@ -340,6 +340,10 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
 
         if (Util::checkAndThrowException(env, obj,
                                          "Can not set 'obj' field in Wrapper<PrintData>", LOCATION_INFO, FUNC_DESC)) {
+
+            // enrolled_print will be deletede when PrintData.close() gonna called
+            // img will be deletede when Img.close() gonna called
+
             return 0;
         }
 

@@ -2,6 +2,7 @@ package jfprint;
 
 import jfprint.base.NativeResource;
 import java.nio.ByteBuffer;
+import jfprint.exception.OperationError;
 
 /**
  *
@@ -36,7 +37,7 @@ public class Img extends NativeResource {
     private native byte[] fp_getData();
     private native int fp_saveToFile(String path);
     private native void fp_standardize();
-    private native Img fp_binarize();
+    private native Img fp_binarize() throws OperationError;
 
 
  	//Gets the pixel height of an image.
@@ -75,7 +76,7 @@ public class Img extends NativeResource {
 
 
     //Get a binarized form of a standardized scanned image.
-    public Img binarize() {
+    public Img binarize() throws OperationError {
         check();
         return fp_binarize();
     }

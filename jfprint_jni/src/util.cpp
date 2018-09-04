@@ -1,6 +1,10 @@
 #include "util.h"
 
 
+#define OPERATION_ERROR_EXCEPTION "Ljfprint/exception/OperationError;"
+#define OPERATION_ERROR_EXCEPTION_CONSTRUCTOR "()V"
+#define OPERATION_ERROR_EXCEPTION_CONSTRUCTOR_MSG "(Ljava/lang/String;)V"
+
 #define CODE_ERROR_EXCEPTION "Ljfprint/exception/CodeError;"
 #define CODE_ERROR_EXCEPTION_CONSTRUCTOR "(I)V"
 
@@ -103,6 +107,27 @@ namespace Util {
         jclass cls = env->FindClass(CODE_ERROR_EXCEPTION);
         jmethodID cttr = env->GetMethodID(cls, "<init>", CODE_ERROR_EXCEPTION_CONSTRUCTOR);
         jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, code));
+
+        return env->Throw(excpt);
+    }
+
+
+    jint throwOperationError(JNIEnv *env)
+    {
+        jclass cls = env->FindClass(OPERATION_ERROR_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(cls, "<init>", OPERATION_ERROR_EXCEPTION_CONSTRUCTOR);
+        jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr));
+
+        return env->Throw(excpt);
+    }
+
+
+    jint throwOperationError(JNIEnv *env, const char *msg)
+    {
+        jclass cls = env->FindClass(OPERATION_ERROR_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(cls, "<init>", OPERATION_ERROR_EXCEPTION_CONSTRUCTOR_MSG);
+        jstring jmsg = env->NewStringUTF(msg);
+        jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, jmsg));
 
         return env->Throw(excpt);
     }
@@ -270,7 +295,7 @@ namespace Util {
     }
 
 
-    bool checkAndThrowException(JNIEnv *env, void *to_verify,
+    bool checkAndThrowException(JNIEnv *env, const void *to_verify,
                                 const char *message, const char *locationInfo, const char *funcName)
     {
         if (NULL == to_verify) {
@@ -290,7 +315,7 @@ namespace Util {
     }
 
 
-    bool checkAndThrowException(JNIEnv *env, void *to_verify, jclass cls,
+    bool checkAndThrowException(JNIEnv *env, const void *to_verify, jclass cls,
                                 const char *message, const char *locationInfo, const char *funcName)
     {
         if (NULL == to_verify) {
@@ -310,7 +335,7 @@ namespace Util {
     }
 
 
-    bool checkAndThrowException(JNIEnv *env, void *to_verify, jobject obj,
+    bool checkAndThrowException(JNIEnv *env, const void *to_verify, jobject obj,
                                 const char *message, const char *locationInfo, const char *funcName)
     {
         if (NULL == to_verify) {

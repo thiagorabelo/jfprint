@@ -54,13 +54,6 @@ namespace Util {
 	extern void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName);
 	extern void* setPointerAddress(JNIEnv *env, jobject obj, const char *fieldName, void *address, size_t size);
 
-	template <typename RetType, typename DataType, typename AppliedFunc>
-	RetType applyFuncToPointer(JNIEnv *env, jobject obj, const char *fieldName, AppliedFunc fn)
-	{
-		DataType **data = reinterpret_cast<DataType**>(Util::getPointerAddress(env, obj, fieldName));
-		return static_cast<RetType>(fn(*data));
-	}
-
 	extern jobject newInstance(JNIEnv *env, const char *clsDescription);
 	extern jobject newInstance(JNIEnv *env, jclass cls);
 
@@ -72,6 +65,8 @@ namespace Util {
 	}
 
 	extern jint throwCodeError(JNIEnv *env, jint code);
+	extern jint throwOperationError(JNIEnv *env);
+	extern jint throwOperationError(JNIEnv *env, const char *msg);
 
     extern jint throwException(JNIEnv *env, const char *message);
     extern jint throwException(JNIEnv *env, const char *clsName, const char *message);
@@ -96,12 +91,26 @@ namespace Util {
                                        const char *message, const char *locationInfo, const char *funcName);
 	extern bool checkAndThrowException(JNIEnv *env, jclass cls,
                                        const char *message, const char *locationInfo, const char *funcName);
-	extern bool checkAndThrowException(JNIEnv *env, void *to_verify,
+	extern bool checkAndThrowException(JNIEnv *env, const void *to_verify,
                                        const char *message, const char *locationInfo, const char *funcName);
-	extern bool checkAndThrowException(JNIEnv *env, void *to_verify, jclass cls,
+	extern bool checkAndThrowException(JNIEnv *env, const void *to_verify, jclass cls,
                                        const char *message, const char *locationInfo, const char *funcName);
-	extern bool checkAndThrowException(JNIEnv *env, void *to_verify, jobject obj,
+	extern bool checkAndThrowException(JNIEnv *env, const void *to_verify, jobject obj,
                                        const char *message, const char *locationInfo, const char *funcName);
+
+
+	template <typename RetType, typename DataType, typename AppliedFunc>
+	RetType applyFuncToPointer(JNIEnv *env, jobject obj, const char *fieldName, AppliedFunc fn, RetType nullVal)
+	{
+		DataType **data = reinterpret_cast<DataType**>(Util::getPointerAddress(env, obj, fieldName));
+
+		if (Util::checkAndThrowException(env, data, obj,
+				                         "Can not access object 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+			return nullVal;
+		}
+
+		return static_cast<RetType>(fn(*data));
+	}
 
 
 	namespace DiscoveredList {

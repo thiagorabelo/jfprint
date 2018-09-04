@@ -20,16 +20,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1get
 {
     jobject dscv_dev = Util::DiscoveredList::nativeGet<fp_dscv_dev>(env, obj, index, "Ljfprint/DiscoveredDevice;");
 
-    if (NULL == dscv_dev) {
-        err("Can not access DiscoveredDevice - " LOCATION_INFO ", ", FUNC_DESC);
-
-        if (env->ExceptionCheck()) {
-            jthrowable cause = Util::stopExceptionPropagation(env);
-            Util::throwNativeException(env, cause, obj, "Can not access DiscoveredDevice", FUNC_DESC, LOCATION_INFO);
-        } else {
-            Util::throwNativeException(env, obj, "Can not access DiscoveredDevice", FUNC_DESC, LOCATION_INFO);
-        }
-
+    if (Util::checkAndThrowException(env, dscv_dev, obj,
+                                     "Can not access DiscoveredDevice", LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
@@ -42,18 +34,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1dicoverDevices
 {
     jobject dscv_dev_list = Util::DiscoveredList::discover<fp_dscv_dev>(env, cls, fp_discover_devs);
 
-    if (NULL == dscv_dev_list) {
-        err("Can not access the list of discovered devices - " LOCATION_INFO ", ", FUNC_DESC);
-
-        if (env->ExceptionCheck()) {
-            jthrowable cause = Util::stopExceptionPropagation(env);
-            Util::throwNativeException(env, cause, cls,
-                                       "Can not access the list of discovered devices", FUNC_DESC, LOCATION_INFO);
-        } else {
-            Util::throwNativeException(env, cls,
-                                       "Can not access the list of discovered devices", FUNC_DESC, LOCATION_INFO);
-        }
-
+    if (Util::checkAndThrowException(env, dscv_dev_list, cls,
+                                     "Can not access the list of discovered devices", LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
