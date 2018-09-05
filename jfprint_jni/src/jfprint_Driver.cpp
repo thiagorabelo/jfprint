@@ -15,7 +15,7 @@ JNIEXPORT void JNICALL Java_jfprint_Driver_nativeClose
     fp_driver **driver = reinterpret_cast<fp_driver**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, driver, obj,
-                                     "Can not access Driver 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DRIVER), LOCATION_INFO, FUNC_DESC)) {
         return;
     }
 
@@ -29,7 +29,7 @@ JNIEXPORT jstring JNICALL Java_jfprint_Driver_fp_1getName
 {
     const char *name = Util::applyFuncToPointer<const char*, fp_driver>(env, obj, "pointer", fp_driver_get_name, NULL);
 
-    if (Util::checkAndThrowException(env, name, obj, "Can not retrieve driver name", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, name, obj, CAN_NOT_RETRIEVE_DRIVER_NAME, LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
@@ -43,7 +43,8 @@ JNIEXPORT jstring JNICALL Java_jfprint_Driver_fp_1getFullName
     const char *name = Util::applyFuncToPointer<const char*, fp_driver>(env, obj, "pointer",
                                                                         fp_driver_get_full_name, NULL);
 
-    if (Util::checkAndThrowException(env, name, obj, "Can not retrieve driver full name", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, name, obj,
+                                     CAN_NOT_RETRIEVE_DRIVER_FULL_NAME, LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
@@ -56,7 +57,7 @@ JNIEXPORT jlong JNICALL Java_jfprint_Driver_fp_1getDriverID
 {
     long id = Util::applyFuncToPointer<jlong, fp_driver>(env, obj, "pointer", fp_driver_get_driver_id, 0L);
 
-    if (Util::checkAndThrowException(env, obj, "Can not retrieve driver name", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, obj, CAN_NOT_RETRIEVE_DRIVER_ID, LOCATION_INFO, FUNC_DESC)) {
         return 0L;
     }
 

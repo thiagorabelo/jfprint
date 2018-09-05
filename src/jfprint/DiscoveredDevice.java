@@ -2,6 +2,7 @@ package jfprint;
 
 import jfprint.base.NativeResource;
 import java.nio.ByteBuffer;
+import jfprint.exception.OperationError;
 
 /**
  *
@@ -25,11 +26,11 @@ public class DiscoveredDevice extends NativeResource {
 
     /**
      * Called by method "clearResources()".
-     * 
+     *
      */
     private native void nativeClose();
 
-    private native Device fp_open();
+    private native Device fp_open() throws OperationError;
 
 
     /**
@@ -40,7 +41,7 @@ public class DiscoveredDevice extends NativeResource {
      *
      * @return    the opened device handle, or {@code null} on error.
      */
-    public Device open() {
+    public Device open() throws OperationError {
         check();
         return fp_open();
     }

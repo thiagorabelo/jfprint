@@ -10,16 +10,17 @@ extern "C"
 JNIEXPORT void JNICALL Java_jfprint_Device_nativeClose
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return;
     }
 
     fp_dev_close(*dev);
     delete dev;
-
-    log("Running ", FUNC_DESC);
 }
 
 
@@ -30,20 +31,22 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1getDriver
 
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
     fp_driver *driver = fp_dev_get_driver(*dev);
 
-    if (Util::checkAndThrowException(env, driver, obj, "Can not retrieve driver", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, driver, obj,
+                                     CAN_NOT_RETRIEVE_POINTER("driver"), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
-    jobject jdriver = Util::newInstance(env, "Ljfprint/Driver;");
+    jobject jdriver = Util::newInstance(env, CLASS_DRIVER);
 
     if (Util::checkAndThrowException(env, jdriver, obj,
-                                     "Can not instantiate Ljfprint/Driver;", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_INSTANTIATE(CLASS_DRIVER), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
@@ -53,7 +56,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1getDriver
     // Returned value does not need be freed
     Util::setPointerAddress(env, jdriver, "pointer", pdriver, sizeof(fp_driver*));
 
-    if (Util::checkAndThrowException(env, obj, "Can not set Driver 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, obj,
+                                     CAN_NOT_SET_POINTER(CLASS_DRIVER), LOCATION_INFO, FUNC_DESC)) {
         delete pdriver;
         return NULL;
     }
@@ -65,9 +69,11 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1getDriver
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getNumEnrollStages
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj, CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -78,9 +84,12 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getNumEnrollStages
 JNIEXPORT jlong JNICALL Java_jfprint_Device_fp_1getDevType
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return 0L;
     }
 
@@ -91,15 +100,19 @@ JNIEXPORT jlong JNICALL Java_jfprint_Device_fp_1getDevType
 JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsPrintData
   (JNIEnv *env, jobject obj, jobject printData)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return false;
     }
 
     fp_print_data **data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, printData, "pointer"));
 
-    if (Util::checkAndThrowException(env, data, obj, "Can not access PrintData 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, data, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
         return false;
     }
 
@@ -110,16 +123,20 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsPrintData
 JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsDiscoveredPrint
   (JNIEnv *env, jobject obj, jobject discoveredPrint)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev,  obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev,  obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return false;
     }
 
-    fp_dscv_print **discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, discoveredPrint, "pointer"));
+    fp_dscv_print **discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(
+        env,discoveredPrint, "pointer"));
 
     if (Util::checkAndThrowException(env, discovered_print, obj,
-                                     "Can not access DiscoveredPrint 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
         return false;
     }
 
@@ -130,9 +147,12 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsDiscoveredPrint
 JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsImaging
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return false;
     }
 
@@ -143,9 +163,12 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsImaging
 JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsIdentification
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return false;
     }
 
@@ -156,15 +179,19 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsIdentification
 JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
   (JNIEnv *env, jobject obj, jboolean unconditional)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
     jobject jimg = Util::newInstance(env, "Ljfprint/Img;");
 
-    if (Util::checkAndThrowException(env, jimg, obj, "Can not instantiate Ljfprint/Img;", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, jimg, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
@@ -187,7 +214,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
 
     Util::setPointerAddress(env, jimg, "pointer", p_img, sizeof(fp_img*));
 
-    if (Util::checkAndThrowException(env, obj, "Can not set Img 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, obj, CAN_NOT_SET_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         delete p_img;
         return NULL;
     }
@@ -199,9 +226,12 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgWidth
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -212,9 +242,12 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgWidth
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgHeight
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -225,33 +258,36 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgHeight
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
   (JNIEnv *env, jobject obj, jobject printDataWrapper, jobject imgWrapper)
 {
+    log("Running ", FUNC_DESC);
+
     jclass wrapperPrintDataCls = env->GetObjectClass(printDataWrapper);
     if (Util::checkAndThrowException(env, wrapperPrintDataCls, obj,
-                                     "Can not access Class<Wrapper<PrintData>>", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_RETRIEVE_WRAPPER_CLASS("PrintData"), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
     jclass wrapperImgCls = env->GetObjectClass(imgWrapper);
     if (Util::checkAndThrowException(env, wrapperImgCls, obj,
-                                     "Can not access Class<Wrapper<Img>>", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_RETRIEVE_WRAPPER_CLASS("Img"), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
-    jfieldID wrapperPrintDataObjField = env->GetFieldID(wrapperPrintDataCls, "obj", "Ljfprint/base/NativeResource;");
+    jfieldID wrapperPrintDataObjField = env->GetFieldID(wrapperPrintDataCls, "obj", CLASS_NATIVE_RESOURCE);
     if (Util::checkAndThrowException(env, wrapperPrintDataObjField, obj,
-                                     "Can not access 'obj' field in Wrapper<PrintData>", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_OBJ_IN_WRAPPER("PrintData"), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
-    jfieldID wrapperImgObjField = env->GetFieldID(wrapperImgCls, "obj", "Ljfprint/base/NativeResource;");
+    jfieldID wrapperImgObjField = env->GetFieldID(wrapperImgCls, "obj", CLASS_NATIVE_RESOURCE);
     if (Util::checkAndThrowException(env, wrapperImgObjField, obj,
-                                     "Can not access 'obj' field in Wrapper<Img>", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_OBJ_IN_WRAPPER("Img"), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -283,10 +319,10 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
     }
 
     if (NULL != *img) {
-        jobject jimg = Util::newInstance(env, "Ljfprint/Img;");
+        jobject jimg = Util::newInstance(env, CLASS_IMG);
 
         if (Util::checkAndThrowException(env, jimg, obj,
-                                         "Can not instantiate Ljfprint/Img;", LOCATION_INFO, FUNC_DESC)) {
+                                         CAN_NOT_INSTANTIATE(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
             delete enrolled_print;
             delete img;
 
@@ -295,7 +331,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
 
         Util::setPointerAddress(env, jimg, "pointer", img, sizeof(fp_img*));
 
-        if (Util::checkAndThrowException(env, obj, "Can not set Ljfprint/Img; 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+        if (Util::checkAndThrowException(env, obj, CAN_NOT_SET_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
             delete enrolled_print;
             delete img;
 
@@ -305,7 +341,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
         env->SetObjectField(imgWrapper, wrapperImgObjField, jimg);
 
         if (Util::checkAndThrowException(env, obj,
-                                         "Can not set 'obj' field in Wrapper<Img>", LOCATION_INFO, FUNC_DESC)) {
+                                         CAN_NOT_SET_OBJ_IN_WRAPPER("Img"), LOCATION_INFO, FUNC_DESC)) {
             delete enrolled_print;
             // img will be deletede when Img.close() gonna called
 
@@ -316,10 +352,10 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
     }
 
     if (NULL != *enrolled_print) {
-        jobject jprintData = Util::newInstance(env, "Ljfprint/PrintData;");
+        jobject jprintData = Util::newInstance(env, CLASS_PRINT_DATA);
 
         if (Util::checkAndThrowException(env, jprintData, obj,
-                                         "Can not instantiate Ljfprint/PrintData;", LOCATION_INFO, FUNC_DESC)) {
+                                         CAN_NOT_INSTANTIATE(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
             delete enrolled_print;
             // img will be deletede when Img.close() gonna called
 
@@ -329,7 +365,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
         Util::setPointerAddress(env, jprintData, "pointer", enrolled_print, sizeof(fp_print_data*));
 
         if (Util::checkAndThrowException(env, obj,
-                                         "Can not set Ljfprint/PrintData; 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                         CAN_NOT_SET_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
             delete enrolled_print;
             // img will be deletede when Img.close() gonna called
 
@@ -339,8 +375,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
         env->SetObjectField(printDataWrapper, wrapperPrintDataObjField, jprintData);
 
         if (Util::checkAndThrowException(env, obj,
-                                         "Can not set 'obj' field in Wrapper<PrintData>", LOCATION_INFO, FUNC_DESC)) {
-
+                                         CAN_NOT_SET_OBJ_IN_WRAPPER("PrintData"), LOCATION_INFO, FUNC_DESC)) {
             // enrolled_print will be deletede when PrintData.close() gonna called
             // img will be deletede when Img.close() gonna called
 
@@ -358,27 +393,30 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
   (JNIEnv *env, jobject obj, jobject enrolled_print, jobject imgWrapper)
 {
+    log("Running ", FUNC_DESC);
+
     jclass wrapperImgCls = env->GetObjectClass(imgWrapper);
     if (Util::checkAndThrowException(env, wrapperImgCls, obj,
-                                     "Can not access Class<Wrapper<Img>>", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_RETRIEVE_WRAPPER_CLASS("Img"), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
-    jfieldID wrapperImgObjField = env->GetFieldID(wrapperImgCls, "obj", "Ljfprint/base/NativeResource;");
+    jfieldID wrapperImgObjField = env->GetFieldID(wrapperImgCls, "obj", CLASS_NATIVE_RESOURCE);
     if (Util::checkAndThrowException(env, wrapperImgCls, obj,
-                                     "Can not access 'obj' field in Wrapper<Img>", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_OBJ_IN_WRAPPER("Img"), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, "Can not access Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj, CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
     fp_print_data **data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, enrolled_print, "pointer"));
 
-    if (Util::checkAndThrowException(env, data, obj, "Can not access PrintData 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, data, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -398,9 +436,9 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
         return 0;
     }
 
-    jobject jimg = Util::newInstance(env, "Ljfprint/Img;");
+    jobject jimg = Util::newInstance(env, CLASS_IMG);
 
-    if (Util::checkAndThrowException(env, jimg, obj, "Can not instantiate Ljfprint/Img;", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, jimg, obj, CAN_NOT_INSTANTIATE(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -409,14 +447,14 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
 
     Util::setPointerAddress(env, jimg, "pointer", p_img, sizeof(fp_img*));
 
-    if (Util::checkAndThrowException(env, obj, "Can not set Ljfprint/Img; 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, obj, CAN_NOT_SET_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         delete p_img;
         return 0;
     }
 
     env->SetObjectField(imgWrapper, wrapperImgObjField, jimg);
 
-    if (Util::checkAndThrowException(env, obj, "Can not set 'obj' field in Wrapper<Img>", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, obj, CAN_NOT_SET_OBJ_IN_WRAPPER("Img"), LOCATION_INFO, FUNC_DESC)) {
         // p_img will be deletede when Img.close gonna called
         return 0;
     }

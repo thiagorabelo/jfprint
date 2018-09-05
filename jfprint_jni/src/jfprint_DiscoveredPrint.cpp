@@ -21,7 +21,7 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getDriverId
     fp_dscv_print **p_dscvrd_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_dscvrd_print, obj,
-                                     "Can not access DiscoveredPrint 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -35,7 +35,7 @@ JNIEXPORT jlong JNICALL Java_jfprint_DiscoveredPrint_fp_1getDevtype
     fp_dscv_print **p_dscvrd_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_dscvrd_print, obj,
-                                     "Can not access DiscoveredPrint 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -49,7 +49,7 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getFinger
     fp_dscv_print **p_dscvrd_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_dscvrd_print, obj,
-                                     "Can not access DiscoveredPrint 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -63,7 +63,7 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1delete
     fp_dscv_print **p_dscvrd_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_dscvrd_print, obj,
-                                     "Can not access DiscoveredPrint 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 

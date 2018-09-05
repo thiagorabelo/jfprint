@@ -1,23 +1,18 @@
 #include "util.h"
 
 
-#define OPERATION_ERROR_EXCEPTION "Ljfprint/exception/OperationError;"
-#define OPERATION_ERROR_EXCEPTION_CONSTRUCTOR "()V"
-#define OPERATION_ERROR_EXCEPTION_CONSTRUCTOR_MSG "(Ljava/lang/String;)V"
+#define CONSTRUCTOR_OPERATION_ERROR_EXCEPTION "()V"
+#define CONSTRUCTOR_OPERATION_ERROR_EXCEPTION_MSG "(Ljava/lang/String;)V"
 
-#define CODE_ERROR_EXCEPTION "Ljfprint/exception/CodeError;"
-#define CODE_ERROR_EXCEPTION_CONSTRUCTOR "(I)V"
+#define CONSTRUCTOR_CODE_ERROR_EXCEPTION "(I)V"
 
-#define NATIVE_EXCEPTION "Ljfprint/exception/NativeException;"
-#define NATIVE_EXCEPTION_CONSTRUCTOR "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
-#define NATIVE_EXCEPTION_CONSTRUCTOR_CAUSE "(Ljava/lang/Throwable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
+#define CONSTRUCTOR_NATIVE_EXCEPTION "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
+#define CONSTRUCTOR_NATIVE_EXCEPTION_CAUSE "(Ljava/lang/Throwable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
 
-#define CLASS_NATIVE_EXCEPTION "Ljfprint/exception/ClassNativeException;"
-#define CLASS_NATIVE_EXCEPTION_CONSTRUCTOR "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
-#define CLASS_NATIVE_EXCEPTION_CONSTRUCTOR_CAUSE "(Ljava/lang/Throwable;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
+#define CONSTRUCTOR_CLASS_NATIVE_EXCEPTION "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
+#define CONSTRUCTOR_CLASS_NATIVE_EXCEPTION_CAUSE "(Ljava/lang/Throwable;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
 
-#define NATIVE_CAN_NOT_FIND_EXCEPTION "Ljfprint/exception/NativeCanNotFindException;"
-#define NATIVE_CAN_NOT_FIND_EXCEPTION_CONSTRUCTOR "(Ljava/lang/String;)V"
+#define CONSTRUCTOR_NATIVE_CAN_NOT_FIND_EXCEPTION "(Ljava/lang/String;)V"
 
 #define EXCEPTION "Ljava/lang/Exception;"
 
@@ -104,8 +99,8 @@ namespace Util {
 
     jint throwCodeError(JNIEnv *env, jint code)
     {
-        jclass cls = env->FindClass(CODE_ERROR_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(cls, "<init>", CODE_ERROR_EXCEPTION_CONSTRUCTOR);
+        jclass cls = env->FindClass(CLASS_CODE_ERROR);
+        jmethodID cttr = env->GetMethodID(cls, "<init>", CONSTRUCTOR_CODE_ERROR_EXCEPTION);
         jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, code));
 
         return env->Throw(excpt);
@@ -114,8 +109,8 @@ namespace Util {
 
     jint throwOperationError(JNIEnv *env)
     {
-        jclass cls = env->FindClass(OPERATION_ERROR_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(cls, "<init>", OPERATION_ERROR_EXCEPTION_CONSTRUCTOR);
+        jclass cls = env->FindClass(CLASS_OPERATION_ERROR);
+        jmethodID cttr = env->GetMethodID(cls, "<init>", CONSTRUCTOR_OPERATION_ERROR_EXCEPTION);
         jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr));
 
         return env->Throw(excpt);
@@ -124,8 +119,8 @@ namespace Util {
 
     jint throwOperationError(JNIEnv *env, const char *msg)
     {
-        jclass cls = env->FindClass(OPERATION_ERROR_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(cls, "<init>", OPERATION_ERROR_EXCEPTION_CONSTRUCTOR_MSG);
+        jclass cls = env->FindClass(CLASS_OPERATION_ERROR);
+        jmethodID cttr = env->GetMethodID(cls, "<init>", CONSTRUCTOR_OPERATION_ERROR_EXCEPTION_MSG);
         jstring jmsg = env->NewStringUTF(msg);
         jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, jmsg));
 
@@ -152,8 +147,8 @@ namespace Util {
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
 
-        jclass cls = env->FindClass(NATIVE_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(cls, "<init>", NATIVE_EXCEPTION_CONSTRUCTOR);
+        jclass cls = env->FindClass(CLASS_NATIVE_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(cls, "<init>", CONSTRUCTOR_NATIVE_EXCEPTION);
 
         jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, jmessage, jfuncName, jlocationInfo));
 
@@ -168,8 +163,8 @@ namespace Util {
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
 
-        jclass excls = env->FindClass(CLASS_NATIVE_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(excls, "<init>", CLASS_NATIVE_EXCEPTION_CONSTRUCTOR);
+        jclass excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION);
 
         jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(excls, cttr, cls,
                                                                        jmessage, jfuncName, jlocationInfo));
@@ -185,8 +180,8 @@ namespace Util {
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
 
-        jclass excls = env->FindClass(CLASS_NATIVE_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(excls, "<init>", CLASS_NATIVE_EXCEPTION_CONSTRUCTOR);
+        jclass excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION);
 
         jclass cls = env->GetObjectClass(obj);
 
@@ -204,8 +199,8 @@ namespace Util {
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
 
-        jclass cls = env->FindClass(NATIVE_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(cls, "<init>", NATIVE_EXCEPTION_CONSTRUCTOR_CAUSE);
+        jclass cls = env->FindClass(CLASS_NATIVE_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(cls, "<init>", CONSTRUCTOR_NATIVE_EXCEPTION_CAUSE);
 
         jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, cause,
                                                         jmessage, jfuncName, jlocationInfo));
@@ -221,8 +216,8 @@ namespace Util {
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
 
-        jclass excls = env->FindClass(CLASS_NATIVE_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(excls, "<init>", CLASS_NATIVE_EXCEPTION_CONSTRUCTOR_CAUSE);
+        jclass excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION_CAUSE);
 
         jclass cls = env->GetObjectClass(obj);
 
@@ -240,8 +235,8 @@ namespace Util {
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
 
-        jclass excls = env->FindClass(CLASS_NATIVE_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(excls, "<init>", CLASS_NATIVE_EXCEPTION_CONSTRUCTOR_CAUSE);
+        jclass excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
+        jmethodID cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION_CAUSE);
 
         jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(excls, cttr, cause, cls,
                                                                        jmessage, jfuncName, jlocationInfo));

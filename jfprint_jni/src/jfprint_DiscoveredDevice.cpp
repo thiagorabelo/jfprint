@@ -19,20 +19,22 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
 {
     fp_dscv_dev **p_discovered_dev = reinterpret_cast<fp_dscv_dev**>(Util::getPointerAddress(env, obj, "pointer"));
     if (Util::checkAndThrowException(env, p_discovered_dev, obj,
-                                     "Can not access DiscoveredDevice 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
     fp_dev *dev = fp_dev_open(*p_discovered_dev);
 
-    if (Util::checkAndThrowException(env, dev, obj, "Could not open device", LOCATION_INFO, FUNC_DESC)) {
+    if (NULL == dev) {
+        log(UNABLE_OPEN_DEVICE);
+        Util::throwOperationError(env, UNABLE_OPEN_DEVICE);
         return NULL;
     }
 
-    jobject device = Util::newInstance(env, "Ljfprint/Device;");
+    jobject device = Util::newInstance(env, CLASS_DEVICE);
 
     if (Util::checkAndThrowException(env, device, obj,
-                                     "Can not instantiate Ljfprint/Device;", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_INSTANTIATE(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
@@ -41,7 +43,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
 
     Util::setPointerAddress(env, device, "pointer", pdev, sizeof(fp_dev*));
 
-    if (Util::checkAndThrowException(env, obj, "Can not set Device 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, obj, CAN_NOT_SET_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         delete pdev;
         return NULL;
     }

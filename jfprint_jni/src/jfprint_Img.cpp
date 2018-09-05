@@ -15,7 +15,7 @@ JNIEXPORT void JNICALL Java_jfprint_Img_nativeClose
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_img, obj,
-                                     "Can not access Img 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         return;
     }
 
@@ -29,7 +29,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getHeight
 {
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, p_img, obj, "Can not access Img 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, p_img, obj, CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -42,7 +42,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getWidth
 {
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, p_img, obj, "Can not access Img 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, p_img, obj, CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -55,12 +55,14 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_fp_1getData
 {
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, p_img, obj, "Can not access Img 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, p_img, obj, CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
     int width = fp_img_get_width(*p_img);
     int height = fp_img_get_height(*p_img);
+
+    // TODO: Validade array size
     int size = width * height;
 
     signed char* data = reinterpret_cast<signed char*>(fp_img_get_data(*p_img));
@@ -68,13 +70,13 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_fp_1getData
     jbyteArray byteArray = env->NewByteArray(size);
 
     if (Util::checkAndThrowException(env, byteArray, obj,
-                                     "Can not instantiate byte array", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_INSTANTIATE("Java byte array"), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
     env->SetByteArrayRegion(byteArray, 0, size, data);
 
-    if (Util::checkAndThrowException(env, obj, "Unable to populate the byte array", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, obj, UNABLE_POPULATE_BYTE_ARRAY, LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
@@ -87,13 +89,13 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1saveToFile
 {
     char *cpath = const_cast<char*>(env->GetStringUTFChars(path, NULL));
 
-    if (Util::checkAndThrowException(env, cpath, obj, "Can not create C style string", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, cpath, obj, CAN_NOT_CREATE_C_STRING, LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, p_img, obj, "Can not access Img 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, p_img, obj, CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         env->ReleaseStringUTFChars(path, cpath);
         return 0;
     }
@@ -107,7 +109,7 @@ JNIEXPORT void JNICALL Java_jfprint_Img_fp_1standardize
 {
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, p_img, obj, "Can not access Img 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, p_img, obj, CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         return;
     }
 
@@ -121,7 +123,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Img_fp_1binarize
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_img, obj,
-                                     "Can not access Img 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -135,10 +137,10 @@ JNIEXPORT jobject JNICALL Java_jfprint_Img_fp_1binarize
         return NULL;
     }
 
-    jobject img = Util::newInstance(env, "Ljfprint/Img;");
+    jobject img = Util::newInstance(env, CLASS_IMG);
 
     if (Util::checkAndThrowException(env, img, obj,
-                                     "Can not instantiate Img", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_INSTANTIATE(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         fp_img_free(*p_img2);
         delete p_img2;
 
@@ -147,7 +149,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Img_fp_1binarize
 
     Util::setPointerAddress(env, img, "pointer", p_img2, sizeof(fp_img*));
 
-    if (Util::checkAndThrowException(env, obj, "Can not access Img 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, obj, CAN_NOT_SET_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         fp_img_free(*p_img2);
         delete p_img2;
 

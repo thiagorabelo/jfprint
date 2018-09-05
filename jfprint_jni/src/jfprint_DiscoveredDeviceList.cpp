@@ -21,7 +21,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1get
     jobject dscv_dev = Util::DiscoveredList::nativeGet<fp_dscv_dev>(env, obj, index, "Ljfprint/DiscoveredDevice;");
 
     if (Util::checkAndThrowException(env, dscv_dev, obj,
-                                     "Can not access DiscoveredDevice", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_DISCOVERED("DiscoveredDevice"), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
@@ -35,7 +35,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1dicoverDevices
     jobject dscv_dev_list = Util::DiscoveredList::discover<fp_dscv_dev>(env, cls, fp_discover_devs);
 
     if (Util::checkAndThrowException(env, dscv_dev_list, cls,
-                                     "Can not access the list of discovered devices", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_DISCOVERED_LIST("discovered devices"), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 

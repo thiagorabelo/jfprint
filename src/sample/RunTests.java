@@ -17,7 +17,7 @@ import jfprint.util.Wrapper;
  */
 public class RunTests {
 
-    private static Device getDevice() {
+    private static Device getDevice() throws Exception {
         try (DiscoveredDeviceList list = DiscoveredDeviceList.dicoverDevices()) {
             System.out.println(format("Found %d devices.", list.size()));
 

@@ -21,7 +21,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1get
     jobject dscv_print = Util::DiscoveredList::nativeGet<fp_dscv_print>(env, obj, index, "Ljfprint/DiscoveredPrint;");
 
     if (Util::checkAndThrowException(env, dscv_print, obj,
-                                     "Can not access DiscoveredPrint", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_DISCOVERED("DiscoveredPrint"), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
@@ -35,7 +35,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1discoverPrints
     jobject dscv_print_list = Util::DiscoveredList::discover<fp_dscv_print>(env, cls, fp_discover_prints);
 
     if (Util::checkAndThrowException(env, dscv_print_list, cls,
-                                     "Can not access the list of discovered prints", LOCATION_INFO, FUNC_DESC)) {
+                                     CAN_NOT_ACCESS_DISCOVERED_LIST("discovered prints"), LOCATION_INFO, FUNC_DESC)) {
         return NULL;
     }
 
