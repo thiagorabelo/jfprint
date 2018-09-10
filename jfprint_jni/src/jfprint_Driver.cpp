@@ -10,7 +10,7 @@ extern "C"
 JNIEXPORT void JNICALL Java_jfprint_Driver_nativeClose
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", __PRETTY_FUNCTION__);
+    log("Running ", FUNC_DESC);
 
     fp_driver **driver = reinterpret_cast<fp_driver**>(Util::getPointerAddress(env, obj, "pointer"));
 
@@ -60,7 +60,7 @@ JNIEXPORT jlong JNICALL Java_jfprint_Driver_fp_1getDriverID
   (JNIEnv *env, jobject obj)
 {
     log("Running ", FUNC_DESC);
-    
+
     long id = Util::applyFuncToPointer<jlong, fp_driver>(env, obj, "pointer", fp_driver_get_driver_id, 0L);
 
     if (Util::checkAndThrowException(env, obj, CAN_NOT_RETRIEVE_DRIVER_ID, LOCATION_INFO, FUNC_DESC)) {
