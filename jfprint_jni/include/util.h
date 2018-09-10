@@ -17,13 +17,20 @@ extern "C" {
 }
 
 
+/** For location log/error information **/
+
 #define __TOSTR(i) #i
 #define  _TOSTR(i) __TOSTR(i)
 #define LOCATION_INFO __FILE__ ":" _TOSTR(__LINE__)
-
 #define FUNC_DESC __PRETTY_FUNCTION__
 
+
+/** Helper to build Java Class JNI style name **/
+
 #define CLASS_PATH(cls) "Ljfprint/" #cls ";"
+
+
+/** Java Class JNI style name **/
 
 #define CLASS_NATIVE_RESOURCE                    CLASS_PATH(base/NativeResource)
 
@@ -47,6 +54,40 @@ extern "C" {
 #define CLASS_WRAPPER                            CLASS_PATH(util/Wrapper)
 #define CLASS_RESULT_TUPLE                       CLASS_PATH(util/ResultTuple)
 
+
+/** Error messages **/
+
+/*
+ *
+ * Tipos de erros:
+ *
+ * - JNI
+ *     - get object class
+ *     - get field id
+ *     - get field value
+ *     - set field value
+ *     - get method id
+ *     - call method
+ *     - populate byte array
+ *     - create c string
+ *     - ERRORS ESPECIALIZADOS
+ *           - instanciar objetos
+ *           - set pointer
+ *           - get pointer
+ *           - get wrapper class
+ *           - get obj em wrapper class
+ *           - set obj em wrapper class
+ *
+ * - fprint
+ *     - impossível abrir dispositivo
+ *     - impossível obter dados do driver: id, type, name, full name
+ *     - impossível obter print data
+ *     - impossível ler print data
+ *     - impossível obter device ou print descobertos
+ *     - impossível descobrir devices prints
+ *
+ */
+
 #define CAN_NOT_ACCESS_POINTER(cls)          "Can not access " cls " 'pointer'"
 #define CAN_NOT_SET_POINTER(cls)             "Can not set " cls " 'pointer'"
 #define CAN_NOT_RETRIEVE_POINTER(txt)        "Can not retrieve native " txt
@@ -57,11 +98,11 @@ extern "C" {
 #define CAN_NOT_SET_OBJ_IN_WRAPPER(cls)      "Can not set 'obj' field in Wrapper<" cls ">"
 
 #define UNABLE_OPEN_DEVICE                   "Unable to open native device"
-#define CAN_NOT_RETRIEVE_DRIVER_ID         "Can not retrieve driver id"
+#define CAN_NOT_RETRIEVE_DRIVER_ID           "Can not retrieve driver id"
+#define CAN_NOT_RETRIEVE_DRIVER_ID           "Can not retrieve driver id"
 #define CAN_NOT_RETRIEVE_DRIVER_TYPE         "Can not retrieve driver type"
 #define CAN_NOT_RETRIEVE_DRIVER_NAME         "Can not retrieve driver name"
 #define CAN_NOT_RETRIEVE_DRIVER_FULL_NAME    "Can not retrieve driver full name"
-#define CAN_NOT_RETRIEVE_DRIVER_ID           "Can not retrieve driver id"
 #define UNABLE_POPULATE_BYTE_ARRAY           "Unable to populate the Java byte array"
 #define CAN_NOT_CREATE_C_STRING              "Can not create C style string"
 #define UNABLE_GET_PRINT_DATA                "Unable to get native print data"
