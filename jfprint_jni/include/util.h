@@ -45,6 +45,7 @@ extern "C" {
 #define CLASS_RESOURCE_ALREADY_CLOSED_EXCEPTION  CLASS_PATH(exception/ResourceAlreadyClosedException)
 
 #define CLASS_WRAPPER                            CLASS_PATH(util/Wrapper)
+#define CLASS_RESULT_TUPLE                       CLASS_PATH(util/ResultTuple)
 
 #define CAN_NOT_ACCESS_POINTER(cls)          "Can not access " cls " 'pointer'"
 #define CAN_NOT_SET_POINTER(cls)             "Can not set " cls " 'pointer'"
@@ -89,7 +90,7 @@ static void __log(std::ostream &stream, T t, Ts const&... ts)
 
 
 #ifdef DEBUG
-#define log(head, ...) __log(std::cout, "NATIVE: ", head, ##__VA_ARGS__);
+#define log(head, ...) __log(std::cout, "    NATIVE >> ", head, ##__VA_ARGS__);
 #else
 #define log(x, ...)
 #endif
@@ -100,8 +101,56 @@ namespace Util {
 	extern void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName);
 	extern void* setPointerAddress(JNIEnv *env, jobject obj, const char *fieldName, void *address, size_t size);
 
-	extern jobject newInstance(JNIEnv *env, const char *clsDescription);
+	extern jobject newInstance(JNIEnv *env, const char *clsName);
 	extern jobject newInstance(JNIEnv *env, jclass cls);
+
+	extern jobject newResultTuple(JNIEnv *env, int code);
+	extern jobject newResultTuple(JNIEnv *env, jobject obj, int code);
+
+	enum InstanciationStatus
+	{
+		INSTANTIATION_OK,
+		INSTANTIATION_ERROR,
+		INSTANTIATION_SET_POINTER_ERROR
+	};
+
+	template <typename T>
+	jobject newNativeResource(JNIEnv *env, const char *clsName, T *ptr, int *status)
+	{
+		jobject jobj = Util::newInstance(env, clsName);
+
+		if (NULL == jobj || env->ExceptionCheck()) {
+			*status = InstanciationStatus::INSTANTIATION_ERROR;
+			return NULL;
+		}
+
+		T **p_ptr = new T*;
+		*p_ptr = ptr;
+
+		Util::setPointerAddress(env, jobj, "pointer", p_ptr, sizeof(T*));
+
+		if (env->ExceptionCheck()) {
+			delete p_ptr;
+			*status = InstanciationStatus::INSTANTIATION_SET_POINTER_ERROR;
+			return NULL;
+		}
+
+		*status = InstanciationStatus::INSTANTIATION_OK;
+
+		return jobj;
+	}
+
+
+	enum SetWrapperStatus
+	{
+		WRAPPER_OK,
+		WRAPPER_GET_CLASS_ERROR,
+		WRAPPER_GET_FIELD_ID_ERROR,
+		WRAPPER_SET_FIELD_ERROR
+	};
+
+	extern void setWrapperObj(JNIEnv *env, jobject wrapper, jobject obj, int *status);
+
 
 	inline jthrowable stopExceptionPropagation(JNIEnv *env)
 	{
@@ -159,7 +208,7 @@ namespace Util {
 	}
 
 
-	namespace DiscoveredList {
+	namespace DiscoveredItemsList {
 
 		template<typename T>
 		size_t getDiscoveredListSize(T **nullTerminatedList)
@@ -198,7 +247,7 @@ namespace Util {
 		  jobject jdicovered = Util::newInstance(env, clsName);
 
 		  if (NULL == jdicovered || env->ExceptionCheck()) {
-			  err("Error while creating new object instance - ", LOCATION_INFO ", ", FUNC_DESC);
+			  err("Error while creating new object instance - " LOCATION_INFO ", ", FUNC_DESC);
 			  return NULL;
 		  }
 
@@ -240,7 +289,7 @@ namespace Util {
 			// There is no need to create a pointer to pointer,
 			// as this is done by the fprint library itself.
 			DiscoveredType **discovereds = fn();
-			size_t size = Util::DiscoveredList::getDiscoveredListSize(discovereds);
+			size_t size = Util::DiscoveredItemsList::getDiscoveredListSize(discovereds);
 
 			Util::setPointerAddress(env, jdiscovered_list, "pointer", discovereds, sizeof(DiscoveredType*));
 
@@ -274,8 +323,31 @@ namespace Util {
 		}
 	};
 
+
+	template <typename T>
+	T** jobjectArrayToCNULLTerminatedArray(JNIEnv *env, jobjectArray array)
+	{
+		jsize size = env->GetArrayLength(array);
+		T **data = new T*[size+1];
+
+		for (jsize i = 0; i < size; i++) {
+			jobject obj = env->GetObjectArrayElement(array, i);
+			T **print_data = reinterpret_cast<T**>(Util::getPointerAddress(env, obj, "pointer"));
+
+			if (Util::checkAndThrowException(env, print_data, obj,
+					                         "Can not access jobject 'pointer'", LOCATION_INFO, FUNC_DESC)) {
+				delete [] data;
+				return NULL;
+			}
+
+			data[i] = *print_data;
+		}
+
+		data[size] = NULL;
+
+		return data;
+	}
 };
 
 
 #endif /* UTIL_H */
-

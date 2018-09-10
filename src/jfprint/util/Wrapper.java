@@ -1,7 +1,6 @@
 package jfprint.util;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import jfprint.base.NativeResource;
 
 /**
@@ -10,7 +9,7 @@ import jfprint.base.NativeResource;
  */
 public class Wrapper<T extends NativeResource> {
 
-    T obj;
+    protected T obj = null;
 
 
     public Wrapper() {

@@ -11,14 +11,16 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredPrintList_nativeClose
   (JNIEnv *env, jobject obj)
 {
     log("Running ", FUNC_DESC);
-    Util::DiscoveredList::nativeClose<fp_dscv_print>(env, obj, fp_dscv_prints_free);
+    Util::DiscoveredItemsList::nativeClose<fp_dscv_print>(env, obj, fp_dscv_prints_free);
 }
 
 
 JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1get
   (JNIEnv *env, jobject obj, jint index)
 {
-    jobject dscv_print = Util::DiscoveredList::nativeGet<fp_dscv_print>(env, obj, index, "Ljfprint/DiscoveredPrint;");
+    log("Running ", FUNC_DESC);
+
+    jobject dscv_print = Util::DiscoveredItemsList::nativeGet<fp_dscv_print>(env, obj, index, "Ljfprint/DiscoveredPrint;");
 
     if (Util::checkAndThrowException(env, dscv_print, obj,
                                      CAN_NOT_ACCESS_DISCOVERED("DiscoveredPrint"), LOCATION_INFO, FUNC_DESC)) {
@@ -32,7 +34,9 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1get
 JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1discoverPrints
   (JNIEnv *env, jclass cls)
 {
-    jobject dscv_print_list = Util::DiscoveredList::discover<fp_dscv_print>(env, cls, fp_discover_prints);
+    log("Running ", FUNC_DESC);
+
+    jobject dscv_print_list = Util::DiscoveredItemsList::discover<fp_dscv_print>(env, cls, fp_discover_prints);
 
     if (Util::checkAndThrowException(env, dscv_print_list, cls,
                                      CAN_NOT_ACCESS_DISCOVERED_LIST("discovered prints"), LOCATION_INFO, FUNC_DESC)) {

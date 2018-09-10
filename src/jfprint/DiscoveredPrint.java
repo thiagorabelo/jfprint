@@ -26,7 +26,7 @@ public class DiscoveredPrint extends NativeResource {
 
     /**
      * Called by method "clearResources()".
-     * 
+     *
      */
     private native void nativeClose();
 
@@ -57,13 +57,13 @@ public class DiscoveredPrint extends NativeResource {
     //Gets the finger code for a discovered print.
     public int getFinger() {
         check();
-        return getFinger();
+        return fp_getFinger();
     }
 
 
     //Removes a discovered print from disk.
     public int delete() {
         check();
-        return delete();
+        return fp_delete();
     }
 }

@@ -73,7 +73,8 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getNumEnrollStages
 
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, dev, obj, CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
 
@@ -188,7 +189,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
         return NULL;
     }
 
-    jobject jimg = Util::newInstance(env, "Ljfprint/Img;");
+    jobject jimg = Util::newInstance(env, CLASS_IMG);
 
     if (Util::checkAndThrowException(env, jimg, obj,
                                      CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
@@ -402,7 +403,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
     }
 
     jfieldID wrapperImgObjField = env->GetFieldID(wrapperImgCls, "obj", CLASS_NATIVE_RESOURCE);
-    if (Util::checkAndThrowException(env, wrapperImgCls, obj,
+    if (Util::checkAndThrowException(env, wrapperImgObjField, obj,
                                      CAN_NOT_ACCESS_OBJ_IN_WRAPPER("Img"), LOCATION_INFO, FUNC_DESC)) {
         return 0;
     }
@@ -439,6 +440,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
     jobject jimg = Util::newInstance(env, CLASS_IMG);
 
     if (Util::checkAndThrowException(env, jimg, obj, CAN_NOT_INSTANTIATE(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
+        fp_img_free(img);
         return 0;
     }
 
@@ -449,6 +451,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
 
     if (Util::checkAndThrowException(env, obj, CAN_NOT_SET_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
         delete p_img;
+        fp_img_free(img);
         return 0;
     }
 
@@ -460,4 +463,276 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
     }
 
     return ret;
+}
+
+
+JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1identifyFingerImg
+  (JNIEnv *env, jobject obj, jobject imgWrapper, jobjectArray printGallery)
+{
+    log("Running ", FUNC_DESC);
+
+    fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
+
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
+        return NULL;
+    }
+
+    fp_print_data **print_data_list = Util::jobjectArrayToCNULLTerminatedArray<fp_print_data>(env, printGallery);
+    size_t offset;
+    fp_img *img = NULL;
+    int ret;
+
+    ret = fp_identify_finger_img(*dev, print_data_list, &offset, NULL == imgWrapper ? NULL : &img);
+
+    if (ret < 0) {
+        delete print_data_list;
+
+        if (NULL != img) {
+            fp_img_free(img);
+        }
+
+        Util::throwCodeError(env, ret);
+
+        return NULL;
+    }
+
+    if (NULL != img) {
+        int status;
+
+        jobject jimg = Util::newNativeResource(env, CLASS_IMG, img, &status);
+
+        if (status != Util::InstanciationStatus::INSTANTIATION_OK) {
+            const char *msg_error;
+
+            if (status == Util::InstanciationStatus::INSTANTIATION_ERROR) {
+                msg_error = CAN_NOT_INSTANTIATE(CLASS_IMG);
+            } else { // (status == Util::InstanciationStatus::INSTANTIATION_SET_POINTER_ERROR) {
+                msg_error = CAN_NOT_SET_POINTER(CLASS_IMG);
+            }
+
+            Util::checkAndThrowException(env, obj, msg_error, LOCATION_INFO, FUNC_DESC);
+
+            delete print_data_list;
+            if (NULL != img) {
+                fp_img_free(img);
+            }
+
+            return NULL;
+        }
+
+        Util::setWrapperObj(env, imgWrapper, jimg, &status);
+
+        if (status != Util::SetWrapperStatus::WRAPPER_OK) {
+            const char *msg_error;
+
+            if (status == Util::SetWrapperStatus::WRAPPER_GET_CLASS_ERROR) {
+                msg_error = CAN_NOT_RETRIEVE_WRAPPER_CLASS("Img");
+            } else if (status == Util::SetWrapperStatus::WRAPPER_GET_FIELD_ID_ERROR) {
+                msg_error = CAN_NOT_ACCESS_OBJ_IN_WRAPPER("Img");
+            } else { // (status == Util::SetWrapperStatus::WRAPPER_SET_FIELD_ERROR)
+                msg_error = CAN_NOT_SET_OBJ_IN_WRAPPER("Img");
+            }
+
+            Util::checkAndThrowException(env, obj, msg_error, LOCATION_INFO, FUNC_DESC);
+
+            delete print_data_list;
+            // img well be freed on Img.close()
+            return NULL;
+        }
+    }
+
+    jobject result;
+
+    if (FP_VERIFY_MATCH == ret) {
+        fp_print_data *print_data = print_data_list[offset];
+
+        int status;
+        jobject jprintData = Util::newNativeResource(env, CLASS_PRINT_DATA, print_data, &status);
+
+        if (status != Util::InstanciationStatus::INSTANTIATION_OK) {
+            const char *msg_error;
+
+            if (status == Util::InstanciationStatus::INSTANTIATION_ERROR) {
+                msg_error = CAN_NOT_INSTANTIATE(CLASS_PRINT_DATA);
+            } else { // (status == Util::InstanciationStatus::INSTANTIATION_SET_POINTER_ERROR)
+                msg_error = CAN_NOT_SET_POINTER(CLASS_PRINT_DATA);
+            }
+
+            delete print_data_list;
+            // img well be freed on Img.close()
+        }
+
+        result = Util::newResultTuple(env, jprintData, ret);
+    } else {
+        result = Util::newResultTuple(env, ret);
+    }
+
+    delete print_data_list;
+
+    return result;
+}
+
+
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFinger
+  (JNIEnv *env, jobject obj, jobject printDataWrapper)
+{
+    log("Running ", FUNC_DESC);
+
+    jclass wrapperPrintDataCls = env->GetObjectClass(printDataWrapper);
+    if (Util::checkAndThrowException(env, wrapperPrintDataCls, obj,
+                                     CAN_NOT_RETRIEVE_WRAPPER_CLASS("PrintData"), LOCATION_INFO, FUNC_DESC)) {
+        return 0;
+    }
+
+    jfieldID wrapperPrintDataObjField = env->GetFieldID(wrapperPrintDataCls, "obj", CLASS_NATIVE_RESOURCE);
+    if (Util::checkAndThrowException(env, wrapperPrintDataObjField, obj,
+                                     CAN_NOT_ACCESS_OBJ_IN_WRAPPER("PrintData"), LOCATION_INFO, FUNC_DESC)) {
+        return 0;
+    }
+
+    fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
+
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
+        return 0;
+    }
+
+    fp_print_data **enrolled_print = new fp_print_data*;
+    *enrolled_print = NULL;
+
+    int ret = fp_enroll_finger(*dev, enrolled_print);
+
+    if (ret < 0) {
+        log("Can not enroll finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
+
+        if (NULL != *enrolled_print) {
+            fp_print_data_free(*enrolled_print);
+        }
+
+        delete enrolled_print;
+        Util::throwCodeError(env, ret);
+
+        return 0;
+    }
+
+    if (NULL != *enrolled_print) {
+        jobject jprintData = Util::newInstance(env, CLASS_PRINT_DATA);
+
+        if (Util::checkAndThrowException(env, jprintData, obj,
+                                         CAN_NOT_INSTANTIATE(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
+            delete enrolled_print;
+
+            return 0;
+        }
+
+        Util::setPointerAddress(env, jprintData, "pointer", enrolled_print, sizeof(fp_print_data*));
+
+        if (Util::checkAndThrowException(env, obj,
+                                         CAN_NOT_SET_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
+            delete enrolled_print;
+
+            return 0;
+        }
+
+        env->SetObjectField(printDataWrapper, wrapperPrintDataObjField, jprintData);
+
+        if (Util::checkAndThrowException(env, obj,
+                                         CAN_NOT_SET_OBJ_IN_WRAPPER("PrintData"), LOCATION_INFO, FUNC_DESC)) {
+            // enrolled_print will be deletede when PrintData.close() gonna called
+
+            return 0;
+        }
+
+    } else {
+        delete enrolled_print;
+    }
+
+    return ret;
+}
+
+
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFinger
+  (JNIEnv *env, jobject obj, jobject enrolled_print) // enroledPrintData)
+{
+    log("Running ", FUNC_DESC);
+
+    fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
+
+    if (Util::checkAndThrowException(env, dev, obj, CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
+        return 0;
+    }
+
+    fp_print_data **data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, enrolled_print, "pointer"));
+
+    if (Util::checkAndThrowException(env, data, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
+        return 0;
+    }
+
+    int ret = fp_verify_finger(*dev, *data);
+
+    if (ret < 0) {
+        log("Can not verify finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
+        Util::throwCodeError(env, ret);
+        return 0;
+    }
+
+    return ret;
+}
+
+
+JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1identifyFinger
+  (JNIEnv *env, jobject obj, jobjectArray printGallery)
+{
+    log("Running ", FUNC_DESC);
+
+    fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, obj, "pointer"));
+
+    if (Util::checkAndThrowException(env, dev, obj,
+                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
+        return NULL;
+    }
+
+    fp_print_data **print_data_list = Util::jobjectArrayToCNULLTerminatedArray<fp_print_data>(env, printGallery);
+    size_t offset;
+    int ret;
+
+    ret = fp_identify_finger(*dev, print_data_list, &offset);
+
+    if (ret < 0) {
+        delete print_data_list;
+        Util::throwCodeError(env, ret);
+        return NULL;
+    }
+
+    jobject result;
+
+    if (FP_VERIFY_MATCH == ret) {
+        fp_print_data *print_data = print_data_list[offset];
+
+        int status;
+        jobject jprintData = Util::newNativeResource(env, CLASS_PRINT_DATA, print_data, &status);
+
+        if (status != Util::InstanciationStatus::INSTANTIATION_OK) {
+            const char *msg_error;
+
+            if (status == Util::InstanciationStatus::INSTANTIATION_ERROR) {
+                msg_error = CAN_NOT_INSTANTIATE(CLASS_PRINT_DATA);
+            } else { // (status == Util::InstanciationStatus::INSTANTIATION_SET_POINTER_ERROR)
+                msg_error = CAN_NOT_SET_POINTER(CLASS_PRINT_DATA);
+            }
+
+            delete print_data_list;
+            // img well be freed on Img.close()
+        }
+
+        result = Util::newResultTuple(env, jprintData, ret);
+    } else {
+        result = Util::newResultTuple(env, ret);
+    }
+
+    delete print_data_list;
+
+    return result;
 }

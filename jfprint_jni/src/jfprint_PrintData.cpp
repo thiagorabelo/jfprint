@@ -28,6 +28,8 @@ JNIEXPORT void JNICALL Java_jfprint_PrintData_nativeClose
 JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_fp_1getData
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, print_data, obj,
@@ -68,6 +70,8 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_fp_1getData
 JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
   (JNIEnv *env, jclass cls, jbyteArray jdata)
 {
+    log("Running ", FUNC_DESC);
+
     jsize jArraySize = env->GetArrayLength(jdata);
 
     if (jArraySize <= 0) {
@@ -83,7 +87,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
 
     if (env->ExceptionCheck()) {
         err("ArrayIndexOutOfBoundsException on copy of jByteArray. " LOCATION_INFO ", ", FUNC_DESC);
-        delete buf;
+        delete [] buf;
         return NULL;
     }
 
@@ -93,7 +97,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
         log(UNABLE_GET_PRINT_DATA " " LOCATION_INFO ", ", FUNC_DESC);
         Util::throwOperationError(env, UNABLE_GET_PRINT_DATA);
         fp_print_data_free(print_data);
-        delete buf;
+        delete [] buf;
         return NULL;
     }
 
@@ -125,6 +129,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
 JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1dataSave
   (JNIEnv *env, jobject obj, jint finger)
 {
+    log("Running ", FUNC_DESC);
+
     fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, print_data, obj,
@@ -139,6 +145,8 @@ JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1dataSave
 JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1dataLoad
   (JNIEnv *env, jclass cls, jobject device, jint finger)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, device, "pointer"));
 
     if (Util::checkAndThrowException(env, dev, cls, CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
@@ -182,6 +190,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1dataLoad
 JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1delete
   (JNIEnv *env, jclass cls, jobject device, jint finger)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, device, "pointer"));
 
     if (Util::checkAndThrowException(env, dev, cls,
@@ -196,6 +206,8 @@ JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1delete
 JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromDiscoveredPrint
   (JNIEnv *env, jclass cls, jobject discoveredPrint)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dscv_print **discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, discoveredPrint, "pointer"));
 
     if (Util::checkAndThrowException(env, discovered_print, cls,
@@ -239,6 +251,8 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromDiscoveredPrint
 JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDriverId
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
 //    fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
 //    return static_cast<jlong>(fp_print_data_get_driver_id(*print_data));
 
@@ -255,6 +269,8 @@ JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDriverId
 JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDevtype
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
 //    fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
 //    return static_cast<jlong>(fp_print_data_get_devtype(*print_data));
 

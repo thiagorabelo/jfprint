@@ -137,6 +137,38 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
   (JNIEnv *, jobject, jobject, jobject);
 
+/*
+ * Class:     jfprint_Device
+ * Method:    fp_identifyFingerImg
+ * Signature: (Ljfprint/util/Wrapper;[Ljfprint/PrintData;)Ljfprint/util/ResultTuple;
+ */
+JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1identifyFingerImg
+  (JNIEnv *, jobject, jobject, jobjectArray);
+
+/*
+ * Class:     jfprint_Device
+ * Method:    fp_enrollFinger
+ * Signature: (Ljfprint/util/Wrapper;)I
+ */
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFinger
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     jfprint_Device
+ * Method:    fp_verifyFinger
+ * Signature: (Ljfprint/PrintData;)I
+ */
+JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFinger
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     jfprint_Device
+ * Method:    fp_identifyFinger
+ * Signature: ([Ljfprint/PrintData;)Ljfprint/util/ResultTuple;
+ */
+JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1identifyFinger
+  (JNIEnv *, jobject, jobjectArray);
+
 #ifdef __cplusplus
 }
 #endif

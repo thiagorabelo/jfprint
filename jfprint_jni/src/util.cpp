@@ -16,6 +16,9 @@
 
 #define EXCEPTION "Ljava/lang/Exception;"
 
+#define CONSTRUCTOR_RESULT_TUPLE "(I)V"
+#define CONSTRUCTOR_RESULT_TUPLE_2 "(Ljfprint/base/NativeResource;I)V"
+
 
 namespace Util {
 
@@ -58,12 +61,12 @@ namespace Util {
     }
 
 
-    jobject newInstance(JNIEnv *env, const char *clsDescription)
+    jobject newInstance(JNIEnv *env, const char *clsName)
     {
-        jclass cls = env->FindClass(clsDescription);
+        jclass cls = env->FindClass(clsName);
 
         if (NULL == cls) {
-            err("Can not find class: ", clsDescription, " - ", LOCATION_INFO, ", ", __PRETTY_FUNCTION__);
+            err("Can not find class: ", clsName, " - ", LOCATION_INFO, ", ", FUNC_DESC);
             return NULL;
         }
 
@@ -76,16 +79,16 @@ namespace Util {
         jmethodID midInit = env->GetMethodID(cls, "<init>", "()V");
 
         if (NULL == midInit) {
-            err("Can not find method initializer ()V.", " - ", LOCATION_INFO, ", ", __PRETTY_FUNCTION__);
+            err("Can not find method initializer ()V - " LOCATION_INFO ", ", FUNC_DESC);
 
             if (env->ExceptionCheck()) {
                 jthrowable cause = Util::stopExceptionPropagation(env);
 
                 Util::throwNativeException(env, cause, cls,
-                                           "Can not find method initializer ()V", __PRETTY_FUNCTION__, LOCATION_INFO);
+                                           "Can not find method initializer ()V", FUNC_DESC, LOCATION_INFO);
             } else {
                 Util::throwNativeException(env, cls, "Can not find method initializer ()V",
-                                           __PRETTY_FUNCTION__, LOCATION_INFO);
+                                           FUNC_DESC, LOCATION_INFO);
             }
 
             return NULL;
@@ -94,6 +97,101 @@ namespace Util {
         jobject newInstance = env->NewObject(cls, midInit);
 
         return newInstance;
+    }
+
+
+    jobject newResultTuple(JNIEnv *env, int code)
+    {
+        jclass cls = env->FindClass(CLASS_RESULT_TUPLE);
+
+        if (NULL == cls) {
+            err("Can not find class: " CLASS_RESULT_TUPLE " - " LOCATION_INFO ", ", FUNC_DESC);
+            return NULL;
+        }
+
+        jmethodID midInit = env->GetMethodID(cls, "<init>", CONSTRUCTOR_RESULT_TUPLE);
+
+        if (NULL == midInit) {
+            err("Can not find method initializer (I)V - " LOCATION_INFO ", ", FUNC_DESC);
+
+            if (env->ExceptionCheck()) {
+                jthrowable cause = Util::stopExceptionPropagation(env);
+
+                Util::throwNativeException(env, cause, cls,
+                                           "Can not find method initializer (I)V", FUNC_DESC, LOCATION_INFO);
+            } else {
+                Util::throwNativeException(env, cls, "Can not find method initializer (I)V",
+                                           FUNC_DESC, LOCATION_INFO);
+            }
+
+            return NULL;
+        }
+
+        jobject result = env->NewObject(cls, midInit, static_cast<jint>(code));
+
+        return result;
+    }
+
+
+    jobject newResultTuple(JNIEnv *env, jobject obj, int code)
+    {
+        jclass cls = env->FindClass(CLASS_RESULT_TUPLE);
+
+        if (NULL == cls) {
+            err("Can not find class: " CLASS_RESULT_TUPLE " - " LOCATION_INFO ", ", FUNC_DESC);
+            return NULL;
+        }
+
+        jmethodID midInit = env->GetMethodID(cls, "<init>", CONSTRUCTOR_RESULT_TUPLE_2);
+
+        if (NULL == midInit) {
+            err("Can not find method initializer (Ljfprint/base/NativeResource;I)V - " LOCATION_INFO ", ", FUNC_DESC);
+
+            if (env->ExceptionCheck()) {
+                jthrowable cause = Util::stopExceptionPropagation(env);
+
+                Util::throwNativeException(env, cause, cls,
+                                           "Can not find method initializer (Ljfprint/base/NativeResource;I)V",
+                                           FUNC_DESC, LOCATION_INFO);
+            } else {
+                Util::throwNativeException(env, cls,
+                                           "Can not find method initializer (Ljfprint/base/NativeResource;I)V",
+                                           FUNC_DESC, LOCATION_INFO);
+            }
+
+            return NULL;
+        }
+
+        jobject result = env->NewObject(cls, midInit, obj, static_cast<jint>(code));
+
+        return result;
+    }
+
+
+    void setWrapperObj(JNIEnv *env, jobject wrapper, jobject obj, int *status)
+    {
+        jclass cls = env->GetObjectClass(wrapper);
+
+        if (NULL == cls) {
+            *status = Util::SetWrapperStatus::WRAPPER_GET_CLASS_ERROR;
+            return;
+        }
+
+        jfieldID fid = env->GetFieldID(cls, "obj", CLASS_NATIVE_RESOURCE);
+
+        if (NULL == fid) {
+            *status = Util::SetWrapperStatus::WRAPPER_GET_FIELD_ID_ERROR;
+            return;
+        }
+
+        env->SetObjectField(wrapper, fid, obj);
+
+        if (env->ExceptionCheck()) {
+            *status = Util::SetWrapperStatus::WRAPPER_SET_FIELD_ERROR;
+            return;
+        }
+
+        *status = Util::SetWrapperStatus::WRAPPER_OK;
     }
 
 

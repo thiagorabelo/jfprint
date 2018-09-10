@@ -17,6 +17,8 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredDevice_nativeClose
 JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_dscv_dev **p_discovered_dev = reinterpret_cast<fp_dscv_dev**>(Util::getPointerAddress(env, obj, "pointer"));
     if (Util::checkAndThrowException(env, p_discovered_dev, obj,
                                      CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_DEVICE), LOCATION_INFO, FUNC_DESC)) {
@@ -27,6 +29,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
 
     if (NULL == dev) {
         log(UNABLE_OPEN_DEVICE);
+        fp_dev_close(dev);
         Util::throwOperationError(env, UNABLE_OPEN_DEVICE);
         return NULL;
     }
@@ -35,6 +38,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
 
     if (Util::checkAndThrowException(env, device, obj,
                                      CAN_NOT_INSTANTIATE(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
+        fp_dev_close(dev);
         return NULL;
     }
 
@@ -45,6 +49,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
 
     if (Util::checkAndThrowException(env, obj, CAN_NOT_SET_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
         delete pdev;
+        fp_dev_close(dev);
         return NULL;
     }
 

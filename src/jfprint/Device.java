@@ -3,6 +3,7 @@ package jfprint;
 import jfprint.base.NativeResource;
 import java.nio.ByteBuffer;
 import jfprint.exception.CodeError;
+import jfprint.util.ResultTuple;
 import jfprint.util.Wrapper;
 
 /**
@@ -60,8 +61,16 @@ public class Device extends NativeResource {
     private native Img fp_imgCapture(boolean unconditional) throws CodeError;
     private native int fp_getImgWidth();
     private native int fp_getImgHeight();
-    private native int fp_enrollFingerImg(Wrapper<PrintData> printDataWrapper, Wrapper<Img> imgWrapper) throws CodeError;
+    private native int fp_enrollFingerImg(Wrapper<PrintData> printDataWrapper, Wrapper<Img> imgWrapper)
+        throws CodeError;
     private native int fp_verifyFingerImg(PrintData enrolled_print, Wrapper<Img> imgWrapper) throws CodeError;
+
+
+    private native ResultTuple<PrintData> fp_identifyFingerImg(Wrapper<Img> img, PrintData ...printGallery) throws CodeError;
+    private native int fp_enrollFinger(Wrapper<PrintData> printData) throws CodeError;
+    private native int fp_verifyFinger(PrintData enrolledPrint) throws CodeError;
+    private native ResultTuple<PrintData> fp_identifyFinger(PrintData ...printGallery) throws CodeError;
+
 
 
     /**
@@ -208,13 +217,27 @@ public class Device extends NativeResource {
     }
 
 
+
+
+
+
+
+
+
+
+
     /**
-     * Performs a new scan and attempts to identify the scanned finger against a collection of previously enrolled fingerprints.
+     * Performs a new scan and attempts to identify the scanned finger against a
+     * collection of previously enrolled fingerprints.
      *
      * @param
      * @return    negative code on error, otherwise a code of {@code FP_VERIFY_???}.
      */
-    // public native int identifyFingerImg(struct fp_dev *dev, struct fp_print_data **print_gallery, size_t *match_offset, struct fp_img **img)
+    public ResultTuple<PrintData> identifyFingerImg(Wrapper<Img> img, PrintData ...printGallery)
+            throws CodeError {
+        check();
+        return fp_identifyFingerImg(img, printGallery);
+    }
 
 
     /**
@@ -223,7 +246,10 @@ public class Device extends NativeResource {
      * @param
      * @return    negative code on error, otherwise a code of {@code FP_ENROLL_???}.
      */
-    // public native int enrollFinger(struct fp_dev *dev, struct fp_print_data **print_data)
+    public int enrollFinger(Wrapper<PrintData> printData) throws CodeError {
+        check();
+        return fp_enrollFinger(printData);
+    }
 
 
     /**
@@ -232,14 +258,21 @@ public class Device extends NativeResource {
      * @param
      * @return    negative code on error, otherwise a code of {@code FP_VERIFY_???}.
      */
-    // public native int verifyFinger(struct fp_dev *dev, struct fp_print_data *enrolled_print)
+    public int verifyFinger(PrintData enrolledPrint) throws CodeError {
+        check();
+        return fp_verifyFinger(enrolledPrint);
+    }
 
 
     /**
-     * Performs a new scan and attempts to identify the scanned finger against a collection of previously enrolled fingerprints.
+     * Performs a new scan and attempts to identify the scanned finger against a
+     * collection of previously enrolled fingerprints.
      *
      * @param
      * @return    negative code on error, otherwise a code of {@code FP_VERIFY_???}.
      */
-    // public native int identifyFinger (struct fp_dev *dev, struct fp_print_data **print_gallery, size_t *match_offset)
+    public ResultTuple<PrintData> identifyFinger(PrintData ...printGallery) throws CodeError {
+        check();
+        return fp_identifyFinger(printGallery);
+    }
 }

@@ -12,6 +12,7 @@ JNIEXPORT void JNICALL Java_jfprint_Img_nativeClose
   (JNIEnv *env, jobject obj)
 {
     log("Running ", FUNC_DESC);
+
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_img, obj,
@@ -27,6 +28,8 @@ JNIEXPORT void JNICALL Java_jfprint_Img_nativeClose
 JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getHeight
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_img, obj, CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
@@ -40,6 +43,8 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getHeight
 JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getWidth
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_img, obj, CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
@@ -53,6 +58,8 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getWidth
 JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_fp_1getData
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_img, obj, CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
@@ -87,6 +94,8 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_fp_1getData
 JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1saveToFile
   (JNIEnv *env, jobject obj, jstring path)
 {
+    log("Running ", FUNC_DESC);
+
     char *cpath = const_cast<char*>(env->GetStringUTFChars(path, NULL));
 
     if (Util::checkAndThrowException(env, cpath, obj, CAN_NOT_CREATE_C_STRING, LOCATION_INFO, FUNC_DESC)) {
@@ -107,6 +116,8 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1saveToFile
 JNIEXPORT void JNICALL Java_jfprint_Img_fp_1standardize
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_img, obj, CAN_NOT_ACCESS_POINTER(CLASS_IMG), LOCATION_INFO, FUNC_DESC)) {
@@ -120,6 +131,8 @@ JNIEXPORT void JNICALL Java_jfprint_Img_fp_1standardize
 JNIEXPORT jobject JNICALL Java_jfprint_Img_fp_1binarize
   (JNIEnv *env, jobject obj)
 {
+    log("Running ", FUNC_DESC);
+
     fp_img **p_img = reinterpret_cast<fp_img**>(Util::getPointerAddress(env, obj, "pointer"));
 
     if (Util::checkAndThrowException(env, p_img, obj,
