@@ -35,6 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/src/exception/BaseException.o \
+	${OBJECTDIR}/src/exception/FPrintError.o \
+	${OBJECTDIR}/src/exception/JNIError.o \
 	${OBJECTDIR}/src/jfprint_Core.o \
 	${OBJECTDIR}/src/jfprint_Device.o \
 	${OBJECTDIR}/src/jfprint_DiscoveredDevice.o \
@@ -70,6 +73,21 @@ LDLIBSOPTIONS=-L/usr/local/libfprint/lib -lfprint
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libjfprintjni.${CND_DLIB_EXT}: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libjfprintjni.${CND_DLIB_EXT} ${OBJECTFILES} ${LDLIBSOPTIONS} -shared -fPIC
+
+${OBJECTDIR}/src/exception/BaseException.o: src/exception/BaseException.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/exception
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/exception/BaseException.o src/exception/BaseException.cpp
+
+${OBJECTDIR}/src/exception/FPrintError.o: src/exception/FPrintError.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/exception
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/exception/FPrintError.o src/exception/FPrintError.cpp
+
+${OBJECTDIR}/src/exception/JNIError.o: src/exception/JNIError.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/exception
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/exception/JNIError.o src/exception/JNIError.cpp
 
 ${OBJECTDIR}/src/jfprint_Core.o: src/jfprint_Core.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
