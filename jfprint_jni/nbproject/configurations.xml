@@ -9,6 +9,7 @@
         <itemPath>include/exception/FPrintError.h</itemPath>
         <itemPath>include/exception/JNIError.h</itemPath>
       </logicalFolder>
+      <itemPath>include/defs.h</itemPath>
       <itemPath>include/jfprint_Core.h</itemPath>
       <itemPath>include/jfprint_Device.h</itemPath>
       <itemPath>include/jfprint_DiscoveredDevice.h</itemPath>
@@ -99,6 +100,8 @@
           <commandLine>-Wl,--no-undefined</commandLine>
         </linkerTool>
       </compileType>
+      <item path="include/defs.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/exception/BaseException.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/exception/FPrintError.h" ex="false" tool="3" flavor2="0">
@@ -207,6 +210,8 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="include/defs.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/exception/BaseException.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/exception/FPrintError.h" ex="false" tool="3" flavor2="0">

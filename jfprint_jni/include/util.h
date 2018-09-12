@@ -16,46 +16,12 @@ extern "C" {
 #include <libfprint/fprint.h>
 }
 
+#include "exception/JNIError.h"
+#include "exception/FPrintError.h"
+#include "defs.h"
 
-/** For location log/error information **/
+#include <utility>
 
-#define __TOSTR(i) #i
-#define  _TOSTR(i) __TOSTR(i)
-#define LOCATION_INFO __FILE__ ":" _TOSTR(__LINE__)
-#define FUNC_DESC __PRETTY_FUNCTION__
-
-
-/** Helper to build Java Class JNI style name **/
-
-#define CLASS_PATH(cls) "Ljfprint/" #cls ";"
-
-
-/** Java Class JNI style name **/
-
-#define CLASS_NATIVE_RESOURCE                    CLASS_PATH(base/NativeResource)
-
-#define CLASS_CORE                               CLASS_PATH(Core)
-#define CLASS_DEVICE                             CLASS_PATH(Device)
-#define CLASS_DISCOVERED_DEVICE                  CLASS_PATH(DiscoveredDevice)
-#define CLASS_DISCOVERED_PRINT_LIST              CLASS_PATH(DiscoveredPrintList)
-#define CLASS_DISCOVERED_PRINT                   CLASS_PATH(DiscoveredPrint)
-#define CLASS_DISCOVERED_DEVICE_LIST             CLASS_PATH(DiscoveredDeviceList)
-#define CLASS_DRIVER                             CLASS_PATH(Driver)
-#define CLASS_IMG                                CLASS_PATH(Img)
-#define CLASS_PRINT_DATA                         CLASS_PATH(PrintData)
-
-#define CLASS_CODE_ERROR                         CLASS_PATH(exception/CodeError)
-#define CLASS_CLASS_NATIVE_EXCEPTION             CLASS_PATH(exception/ClassNativeException)
-#define CLASS_NATIVE_EXCEPTION                   CLASS_PATH(exception/NativeException)
-#define CLASS_NATIVE_CAN_NOT_FIND_EXCEPTION      CLASS_PATH(exception/NativeCanNotFindException)
-#define CLASS_OPERATION_ERROR                    CLASS_PATH(exception/OperationError)
-#define CLASS_RESOURCE_ALREADY_CLOSED_EXCEPTION  CLASS_PATH(exception/ResourceAlreadyClosedException)
-
-#define CLASS_WRAPPER                            CLASS_PATH(util/Wrapper)
-#define CLASS_RESULT_TUPLE                       CLASS_PATH(util/ResultTuple)
-
-
-/** Error messages **/
 
 /*
  *
@@ -88,28 +54,6 @@ extern "C" {
  *
  */
 
-#define CAN_NOT_ACCESS_POINTER(cls)          "Can not access " cls " 'pointer'"
-#define CAN_NOT_SET_POINTER(cls)             "Can not set " cls " 'pointer'"
-#define CAN_NOT_RETRIEVE_POINTER(txt)        "Can not retrieve native " txt
-#define CAN_NOT_INSTANTIATE(cls)             "Can not instantiate " cls
-#define CAN_NOT_RETRIEVE_CLASS(cls)          "Can not retrieve " cls ".class"
-#define CAN_NOT_RETRIEVE_WRAPPER_CLASS(cls)  "Can not retrieve Class<Wrapper<" cls ">>"
-#define CAN_NOT_ACCESS_OBJ_IN_WRAPPER(cls)   "Can not access 'obj' field in Wrapper<" cls ">"
-#define CAN_NOT_SET_OBJ_IN_WRAPPER(cls)      "Can not set 'obj' field in Wrapper<" cls ">"
-
-#define UNABLE_OPEN_DEVICE                   "Unable to open native device"
-#define CAN_NOT_RETRIEVE_DRIVER_ID           "Can not retrieve driver id"
-#define CAN_NOT_RETRIEVE_DRIVER_ID           "Can not retrieve driver id"
-#define CAN_NOT_RETRIEVE_DRIVER_TYPE         "Can not retrieve driver type"
-#define CAN_NOT_RETRIEVE_DRIVER_NAME         "Can not retrieve driver name"
-#define CAN_NOT_RETRIEVE_DRIVER_FULL_NAME    "Can not retrieve driver full name"
-#define UNABLE_POPULATE_BYTE_ARRAY           "Unable to populate the Java byte array"
-#define CAN_NOT_CREATE_C_STRING              "Can not create C style string"
-#define UNABLE_GET_PRINT_DATA                "Unable to get native print data"
-#define CAN_NOT_LOAD_PRINT_DATA              "Can not load fp_print_data"
-
-#define CAN_NOT_ACCESS_DISCOVERED(txt)       "Can not access " txt
-#define CAN_NOT_ACCESS_DISCOVERED_LIST(txt)  "Can not access the list of " txt
 
 
 template<typename T>
@@ -139,6 +83,74 @@ static void __log(std::ostream &stream, T t, Ts const&... ts)
 
 namespace Util {
 
+//	class JNIHelper
+//    {
+//        public:
+//            JNIHelper(JNIEnv* env);
+//            JNIHelper(JNIHelper& orig);
+//            virtual ~JNIHelper();
+//
+//            jclass getObjectClass(jobject obj);
+//            jclass findClass(const char clsName);
+//
+//			template <typename F>
+//			F getFieldValue(jobject obj, const char* fieldName){ return nullptr; }
+//
+//			template <typename F, typename V>
+//			void setFieldValue(jobject obj, const char* fieldName, V value) {}
+//
+//			template <typename... Args>
+//			jboolean callMethod(jobject obj, const char *methodName, Args&&... args)
+//			{
+//				return env->CallBooleanMethod(obj, nullptr, std::forward<Args>(args)...);
+//			}
+//
+//			jobject CallNonvirtualObjectMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//			jboolean CallNonvirtualBooleanMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//			jbyte CallNonvirtualByteMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//			jchar CallNonvirtualCharMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//			jshort CallNonvirtualShortMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//			jint CallNonvirtualIntMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//			jlong CallNonvirtualLongMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//			jfloat CallNonvirtualFloatMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//			jdouble CallNonvirtualDoubleMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//			void CallNonvirtualVoidMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
+//
+//
+//			jobject CallStaticObjectMethod(jclass clazz, jmethodID methodID, ...)
+//			jboolean CallStaticBooleanMethod(jclass clazz, jmethodID methodID, ...)
+//			jbyte CallStaticByteMethod(jclass clazz, jmethodID methodID, ...)
+//			jchar CallStaticCharMethod(jclass clazz, jmethodID methodID, ...)
+//			jshort CallStaticShortMethod(jclass clazz, jmethodID methodID, ...)
+//			jint CallStaticIntMethod(jclass clazz, jmethodID methodID, ...)
+//			jlong CallStaticLongMethod(jclass clazz, jmethodID methodID, ...)
+//			jfloat CallStaticFloatMethod(jclass clazz, jmethodID methodID, ...)
+//			jdouble CallStaticDoubleMethod(jclass clazz, jmethodID methodID, ...)
+//			void CallStaticVoidMethod(jclass cls, jmethodID methodID, ...)
+//
+//
+//			jobject CallObjectMethod(jobject obj, jmethodID methodID, ...)
+//			jboolean CallBooleanMethod(jobject obj, jmethodID methodID, ...)
+//			jbyte CallByteMethod(jobject obj, jmethodID methodID, ...)
+//			jchar CallCharMethod(jobject obj, jmethodID methodID, ...)
+//			jshort CallShortMethod(jobject obj, jmethodID methodID, ...)
+//			jint CallIntMethod(jobject obj, jmethodID methodID, ...)
+//			jlong CallLongMethod(jobject obj, jmethodID methodID, ...)
+//			jfloat CallFloatMethod(jobject obj, jmethodID methodID, ...)
+//			jdouble CallDoubleMethod(jobject obj, jmethodID methodID, ...)
+//			void CallVoidMethod(jobject obj, jmethodID methodID, ...)
+//
+//        private:
+//            JNIEnv* env;
+//    };
+
+	/**
+	 *
+	 * @param env
+	 * @param obj
+	 * @param fieldName
+	 * @return
+	 */
 	extern void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName);
 	extern void* setPointerAddress(JNIEnv *env, jobject obj, const char *fieldName, void *address, size_t size);
 
@@ -155,8 +167,19 @@ namespace Util {
 		INSTANTIATION_SET_POINTER_ERROR
 	};
 
+
+	/**
+	 *
+	 * @param env
+	 * @param clsName
+	 * @param ptr
+	 * @param status
+	 * @return
+	 *
+	 * @throws
+	 */
 	template <typename T>
-	jobject newNativeResource(JNIEnv *env, const char *clsName, T *ptr, int *status)
+	jobject newNativeResource(JNIEnv *env, const char *clsName, T *ptr, int *status) noexcept(false)
 	{
 		jobject jobj = Util::newInstance(env, clsName);
 

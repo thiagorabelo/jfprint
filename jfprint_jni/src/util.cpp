@@ -19,18 +19,54 @@
 #define CONSTRUCTOR_RESULT_TUPLE "(I)V"
 #define CONSTRUCTOR_RESULT_TUPLE_2 "(Ljfprint/base/NativeResource;I)V"
 
+#define CLASS_BYTE_BUFFER "Ljava/nio/ByteBuffer;"
+
 
 namespace Util {
 
-    void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName)
+//    JNIHelper::JNIHelper(JNIEnv* env)
+//    {
+//    }
+//
+//    JNIHelper::JNIHelper(JNIHelper& orig)
+//    {
+//    }
+//
+//    JNIHelper::~JNIHelper()
+//    {
+//    }
+//
+//    jclass JNIHelper::getObjectClass(jobject obj)
+//    {
+//        return nullptr;
+//    }
+//
+//    jclass JNIHelper::findClass(const char clsName)
+//    {
+//        return nullptr;
+//    }
+
+
+    void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName) noexcept(false)
+    // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError
 	{
 		jclass cls = env->GetObjectClass(obj);
-		jfieldID pointerId = env->GetFieldID(cls, fieldName, "Ljava/nio/ByteBuffer;");
+        if (NULL == cls) {
+            err("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetObjectClassError(LOCATION_INFO, FUNC_DESC);
+        }
+
+		jfieldID pointerId = env->GetFieldID(cls, fieldName, CLASS_BYTE_BUFFER);
+        if (NULL == pointerId) {
+            err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
+        }
+
 		jobject pointer = env->GetObjectField(obj, pointerId);
 
 		if (NULL == pointer) {
-			err("Can not access field 'pointer'. - " LOCATION_INFO, ", ", __PRETTY_FUNCTION__);
-			return NULL;
+			err("On get 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetFieldValueError(LOCATION_INFO, FUNC_DESC);
 		}
 
 		return static_cast<void**>(env->GetDirectBufferAddress(pointer));
@@ -38,20 +74,38 @@ namespace Util {
 
 
     // TODO: Check all calls to me, if the returned value must be freed.
-    void* setPointerAddress(JNIEnv *env, jobject obj, const char *fieldName, void *address, size_t size)
+    void* setPointerAddress(JNIEnv *env, jobject obj, const char *fieldName, void *address, size_t size) noexcept(false)
+    // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError, JNISetFieldValueError
     {
         jclass cls = env->GetObjectClass(obj);
-        jfieldID pointerId = env->GetFieldID(cls,  fieldName, "Ljava/nio/ByteBuffer;");
+        if (NULL == cls) {
+            err("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetObjectClassError(LOCATION_INFO, FUNC_DESC);
+        }
 
+        jfieldID pointerId = env->GetFieldID(cls,  fieldName, CLASS_BYTE_BUFFER);
         if (NULL == pointerId || env->ExceptionCheck()) {
-            err("Can not find 'pointerId' - " LOCATION_INFO, ", ", __PRETTY_FUNCTION__);
-            return NULL;
+            err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
         }
 
         jobject oldPointer = env->GetObjectField(obj, pointerId);
+        if (env->ExceptionCheck()) {
+            err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
+        }
+
         jobject pointer = env->NewDirectByteBuffer(address, size);
+        if (NULL == pointer) {
+            err("On get 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetFieldValueError(LOCATION_INFO, FUNC_DESC);
+        }
 
         env->SetObjectField(obj, pointerId, pointer);
+        if (env->ExceptionCheck()) {
+            err("On set 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNISetFieldValueError(LOCATION_INFO, FUNC_DESC);
+        }
 
         if (NULL == oldPointer) {
             return NULL;
@@ -61,12 +115,14 @@ namespace Util {
     }
 
 
-    jobject newInstance(JNIEnv *env, const char *clsName)
+    jobject newInstance(JNIEnv *env, const char *clsName) noexcept(false)
+    // throws: JNIFindClassError, JNIGetIdError, JNINewObjectError
     {
         jclass cls = env->FindClass(clsName);
 
         if (NULL == cls) {
-            err("Can not find class: ", clsName, " - ", LOCATION_INFO, ", ", FUNC_DESC);
+            err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIFindClassError(LOCATION_INFO, FUNC_DESC);
             return NULL;
         }
 
@@ -74,60 +130,47 @@ namespace Util {
     }
 
 
-    jobject newInstance(JNIEnv *env, jclass cls)
+    jobject newInstance(JNIEnv *env, jclass cls) noexcept(false)
+    // throws: JNIGetIdError, JNINewObjectError
     {
         jmethodID midInit = env->GetMethodID(cls, "<init>", "()V");
-
         if (NULL == midInit) {
-            err("Can not find method initializer ()V - " LOCATION_INFO ", ", FUNC_DESC);
-
-            if (env->ExceptionCheck()) {
-                jthrowable cause = Util::stopExceptionPropagation(env);
-
-                Util::throwNativeException(env, cause, cls,
-                                           "Can not find method initializer ()V", FUNC_DESC, LOCATION_INFO);
-            } else {
-                Util::throwNativeException(env, cls, "Can not find method initializer ()V",
-                                           FUNC_DESC, LOCATION_INFO);
-            }
-
-            return NULL;
+            err("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
         }
 
         jobject newInstance = env->NewObject(cls, midInit);
+
+        if (NULL == newInstance || env->ExceptionCheck()) {
+            err("On instantiate a new object");
+            throw JNINewObjectError(LOCATION_INFO, FUNC_DESC);
+        }
 
         return newInstance;
     }
 
 
     jobject newResultTuple(JNIEnv *env, int code)
+    // throws: JNIFindClassError, JNIGetIdError, JNINewObjectError
     {
         jclass cls = env->FindClass(CLASS_RESULT_TUPLE);
-
         if (NULL == cls) {
-            err("Can not find class: " CLASS_RESULT_TUPLE " - " LOCATION_INFO ", ", FUNC_DESC);
-            return NULL;
+            err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIFindClassError(LOCATION_INFO, FUNC_DESC);
         }
 
         jmethodID midInit = env->GetMethodID(cls, "<init>", CONSTRUCTOR_RESULT_TUPLE);
-
         if (NULL == midInit) {
-            err("Can not find method initializer (I)V - " LOCATION_INFO ", ", FUNC_DESC);
-
-            if (env->ExceptionCheck()) {
-                jthrowable cause = Util::stopExceptionPropagation(env);
-
-                Util::throwNativeException(env, cause, cls,
-                                           "Can not find method initializer (I)V", FUNC_DESC, LOCATION_INFO);
-            } else {
-                Util::throwNativeException(env, cls, "Can not find method initializer (I)V",
-                                           FUNC_DESC, LOCATION_INFO);
-            }
-
-            return NULL;
+            err("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
         }
 
         jobject result = env->NewObject(cls, midInit, static_cast<jint>(code));
+
+        if (NULL == result) {
+            err("On instantiate object - ", LOCATION_INFO, FUNC_DESC);
+            throw JNINewObjectError(LOCATION_INFO, FUNC_DESC);
+        }
 
         return result;
     }

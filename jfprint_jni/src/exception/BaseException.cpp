@@ -13,14 +13,14 @@
 
 /* Helper functions */
 
-void build_what_msg(char **dest, std::ostringstream& ss)
+static void build_what_msg(char **dest, std::ostringstream& ss)
 {
     std::string src = ss.str();
     *dest = new char[src.length() + 1];
     std::strcpy(*dest, src.c_str());
 }
 
-void build_what_msg(char **dest, const char* msg,
+static void build_what_msg(char **dest, const char* msg,
                                  const char* location_info,
                                  const char* function_info)
 {
