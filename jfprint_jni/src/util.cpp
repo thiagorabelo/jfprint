@@ -103,7 +103,7 @@ namespace Util {
 
         env->SetObjectField(obj, pointerId, pointer);
         if (env->ExceptionCheck()) {
-            err("On set 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
+            err("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNISetFieldValueError(LOCATION_INFO, FUNC_DESC);
         }
 
@@ -123,7 +123,6 @@ namespace Util {
         if (NULL == cls) {
             err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIFindClassError(LOCATION_INFO, FUNC_DESC);
-            return NULL;
         }
 
         return Util::newInstance(env, cls);
@@ -140,7 +139,6 @@ namespace Util {
         }
 
         jobject newInstance = env->NewObject(cls, midInit);
-
         if (NULL == newInstance || env->ExceptionCheck()) {
             err("On instantiate a new object");
             throw JNINewObjectError(LOCATION_INFO, FUNC_DESC);
@@ -150,7 +148,7 @@ namespace Util {
     }
 
 
-    jobject newResultTuple(JNIEnv *env, int code)
+    jobject newResultTuple(JNIEnv *env, int code) noexcept(false)
     // throws: JNIFindClassError, JNIGetIdError, JNINewObjectError
     {
         jclass cls = env->FindClass(CLASS_RESULT_TUPLE);
@@ -167,7 +165,7 @@ namespace Util {
 
         jobject result = env->NewObject(cls, midInit, static_cast<jint>(code));
 
-        if (NULL == result) {
+        if (NULL == result  || env->ExceptionCheck()) {
             err("On instantiate object - ", LOCATION_INFO, FUNC_DESC);
             throw JNINewObjectError(LOCATION_INFO, FUNC_DESC);
         }
@@ -176,65 +174,51 @@ namespace Util {
     }
 
 
-    jobject newResultTuple(JNIEnv *env, jobject obj, int code)
+    jobject newResultTuple(JNIEnv *env, jobject obj, int code) noexcept(false)
+    // throws: JNIFindClassError, JNIGetIdError, JNINewObjectError
     {
         jclass cls = env->FindClass(CLASS_RESULT_TUPLE);
-
         if (NULL == cls) {
-            err("Can not find class: " CLASS_RESULT_TUPLE " - " LOCATION_INFO ", ", FUNC_DESC);
-            return NULL;
+            err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIFindClassError(LOCATION_INFO, FUNC_DESC);
         }
 
         jmethodID midInit = env->GetMethodID(cls, "<init>", CONSTRUCTOR_RESULT_TUPLE_2);
-
         if (NULL == midInit) {
-            err("Can not find method initializer (Ljfprint/base/NativeResource;I)V - " LOCATION_INFO ", ", FUNC_DESC);
-
-            if (env->ExceptionCheck()) {
-                jthrowable cause = Util::stopExceptionPropagation(env);
-
-                Util::throwNativeException(env, cause, cls,
-                                           "Can not find method initializer (Ljfprint/base/NativeResource;I)V",
-                                           FUNC_DESC, LOCATION_INFO);
-            } else {
-                Util::throwNativeException(env, cls,
-                                           "Can not find method initializer (Ljfprint/base/NativeResource;I)V",
-                                           FUNC_DESC, LOCATION_INFO);
-            }
-
-            return NULL;
+            err("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
         }
 
         jobject result = env->NewObject(cls, midInit, obj, static_cast<jint>(code));
+        if (NULL == result || env->ExceptionCheck()) {
+            err("On instantiate object - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNINewObjectError(LOCATION_INFO, FUNC_DESC);
+        }
 
         return result;
     }
 
 
-    void setWrapperObj(JNIEnv *env, jobject wrapper, jobject obj, int *status)
+    void setWrapperObj(JNIEnv *env, jobject wrapper, jobject obj) noexcept(false)
+    // throws: JNIGetObjectClassError, JNIGetIdError, JNISetFieldValueError
     {
         jclass cls = env->GetObjectClass(wrapper);
-
         if (NULL == cls) {
-            *status = Util::SetWrapperStatus::WRAPPER_GET_CLASS_ERROR;
-            return;
+            err("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetObjectClassError(LOCATION_INFO, FUNC_DESC);
         }
 
         jfieldID fid = env->GetFieldID(cls, "obj", CLASS_NATIVE_RESOURCE);
-
         if (NULL == fid) {
-            *status = Util::SetWrapperStatus::WRAPPER_GET_FIELD_ID_ERROR;
-            return;
+            err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
         }
 
         env->SetObjectField(wrapper, fid, obj);
-
         if (env->ExceptionCheck()) {
-            *status = Util::SetWrapperStatus::WRAPPER_SET_FIELD_ERROR;
-            return;
+            err("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNISetFieldValueError(LOCATION_INFO, FUNC_DESC);
         }
-
-        *status = Util::SetWrapperStatus::WRAPPER_OK;
     }
 
 
