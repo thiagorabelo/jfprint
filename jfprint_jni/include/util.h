@@ -12,50 +12,16 @@
 #include <iostream>
 #include <jni.h>
 
-/*
+
 extern "C" {
 #include <libfprint/fprint.h>
 }
-*/
 
 #include "exception/JNIError.h"
 #include "exception/FPrintError.h"
 #include "defs.h"
 
 #include <utility>
-
-
-/*
- *
- * Tipos de erros:
- *
- * - JNI
- *     - get object class
- *     - get field id
- *     - get field value
- *     - set field value
- *     - get method id
- *     - call method
- *     - populate byte array
- *     - create c string
- *     - ERRORS ESPECIALIZADOS
- *           - instanciar objetos
- *           - set pointer
- *           - get pointer
- *           - get wrapper class
- *           - get obj em wrapper class
- *           - set obj em wrapper class
- *
- * - fprint
- *     - impossível abrir dispositivo
- *     - impossível obter dados do driver: id, type, name, full name
- *     - impossível obter print data
- *     - impossível ler print data
- *     - impossível obter device ou print descobertos
- *     - impossível descobrir devices prints
- *
- */
-
 
 
 template<typename T>
@@ -85,88 +51,120 @@ static void __log(std::ostream &stream, T t, Ts const&... ts)
 
 namespace Util {
 
-//    class JNIHelper
-//    {
-//        public:
-//            JNIHelper(JNIEnv* env);
-//            JNIHelper(JNIHelper& orig);
-//            virtual ~JNIHelper();
-//
-//            jclass getObjectClass(jobject obj);
-//            jclass findClass(const char clsName);
-//
-//            template <typename F>
-//            F getFieldValue(jobject obj, const char* fieldName){ return nullptr; }
-//
-//            template <typename F, typename V>
-//            void setFieldValue(jobject obj, const char* fieldName, V value) {}
-//
-//            template <typename... Args>
-//            jboolean callMethod(jobject obj, const char *methodName, Args&&... args)
-//            {
-//                return env->CallBooleanMethod(obj, nullptr, std::forward<Args>(args)...);
-//            }
-//
-//            jobject CallNonvirtualObjectMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//            jboolean CallNonvirtualBooleanMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//            jbyte CallNonvirtualByteMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//            jchar CallNonvirtualCharMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//            jshort CallNonvirtualShortMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//            jint CallNonvirtualIntMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//            jlong CallNonvirtualLongMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//            jfloat CallNonvirtualFloatMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//            jdouble CallNonvirtualDoubleMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//            void CallNonvirtualVoidMethod(jobject obj, jclass clazz, jmethodID methodID, ...)
-//
-//
-//            jobject CallStaticObjectMethod(jclass clazz, jmethodID methodID, ...)
-//            jboolean CallStaticBooleanMethod(jclass clazz, jmethodID methodID, ...)
-//            jbyte CallStaticByteMethod(jclass clazz, jmethodID methodID, ...)
-//            jchar CallStaticCharMethod(jclass clazz, jmethodID methodID, ...)
-//            jshort CallStaticShortMethod(jclass clazz, jmethodID methodID, ...)
-//            jint CallStaticIntMethod(jclass clazz, jmethodID methodID, ...)
-//            jlong CallStaticLongMethod(jclass clazz, jmethodID methodID, ...)
-//            jfloat CallStaticFloatMethod(jclass clazz, jmethodID methodID, ...)
-//            jdouble CallStaticDoubleMethod(jclass clazz, jmethodID methodID, ...)
-//            void CallStaticVoidMethod(jclass cls, jmethodID methodID, ...)
-//
-//
-//            jobject CallObjectMethod(jobject obj, jmethodID methodID, ...)
-//            jboolean CallBooleanMethod(jobject obj, jmethodID methodID, ...)
-//            jbyte CallByteMethod(jobject obj, jmethodID methodID, ...)
-//            jchar CallCharMethod(jobject obj, jmethodID methodID, ...)
-//            jshort CallShortMethod(jobject obj, jmethodID methodID, ...)
-//            jint CallIntMethod(jobject obj, jmethodID methodID, ...)
-//            jlong CallLongMethod(jobject obj, jmethodID methodID, ...)
-//            jfloat CallFloatMethod(jobject obj, jmethodID methodID, ...)
-//            jdouble CallDoubleMethod(jobject obj, jmethodID methodID, ...)
-//            void CallVoidMethod(jobject obj, jmethodID methodID, ...)
-//
-//        private:
-//            JNIEnv* env;
-//    };
+	class JNIHandler
+	{
+		public:
+			JNIHandler(JNIEnv* env);
+			~JNIHanlder();
+
+			template <typename T>
+			T** getPointer(jobject obj) noexcept(false)
+			{
+				try {
+					return reinterpret_cast<T**>Util::getPointerAddress(env, obj, "pointer");
+				} catch (JNIError& error) {
+					throw JNIPointerError(error);
+				}
+			}
+		private:
+			JNIEnv* env;
+	};
 
     /**
-     *
-     * @param env
-     * @param obj
-     * @param fieldName
-     * @return
-     */
-    extern void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName);
-    extern void* setPointerAddress(JNIEnv *env, jobject obj, const char *fieldName, void *address, size_t size);
+	 *
+	 * @param env
+	 * @param obj
+	 * @param fieldName
+	 * @return
+	 *
+	 * @throws JNIGetObjectClassError
+	 * @throws JNIGetIdError
+	 * @throws JNIGetFieldValueError
+	 */
+    extern void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName) noexcept(false) ;
 
-    extern jobject newInstance(JNIEnv *env, const char *clsName);
-    extern jobject newInstance(JNIEnv *env, jclass cls);
+	/**
+	 *
+	 * @param env
+	 * @param obj
+	 * @param fieldName
+	 * @param address
+	 * @param size
+	 * @return
+	 *
+	 * @throws JNIGetObjectClassError
+	 * @throws JNIGetIdError
+	 * @throws JNIGetFieldValueError
+	 * @throws JNISetFieldValueError
+	 */
+    extern void* setPointerAddress(JNIEnv *env, jobject obj, const char *fieldName, void *address, size_t size) noexcept(false);
 
-    extern jobject newResultTuple(JNIEnv *env, int code);
-    extern jobject newResultTuple(JNIEnv *env, jobject obj, int code);
+
+	/**
+	 *
+	 * @param env
+	 * @param clsName
+	 * @return
+	 *
+	 * @throws JNIFindClassError
+	 * @throws JNIGetIdError
+	 * @throws JNINewObjectError
+	 */
+    extern jobject newInstance(JNIEnv *env, const char *clsName) noexcept(false);
+
+	/**
+	 *
+	 * @param env
+	 * @param cls
+	 * @return
+	 *
+	 * @throws JNIGetIdError
+	 * @throws JNINewObjectError
+	 */
+    extern jobject newInstance(JNIEnv *env, jclass cls) noexcept(false);
+
+	/**
+	 *
+	 * @param env
+	 * @param code
+	 * @return
+	 *
+	 * @throws JNIFindClassError
+	 * @throws JNIGetIdError
+	 * @throws JNINewObjectError
+	 */
+    extern jobject newResultTuple(JNIEnv *env, int code) noexcept(false);
+
+	/**
+	 *
+	 * @param env
+	 * @param obj
+	 * @param code
+	 * @return
+	 *
+	 * @throws JNIFindClassError
+	 * @throws JNIGetIdError
+	 * @throws JNINewObjectError
+	 */
+    extern jobject newResultTuple(JNIEnv *env, jobject obj, int code) noexcept(false);
 
 
+	/**
+	 *
+	 * @param env
+	 * @param clsName
+	 * @param ptr
+	 * @return
+	 *
+	 * @throws JNIFindClassError
+	 * @throws JNIGetIdError
+	 * @throws JNINewObjectError
+	 * @throws JNIGetObjectClassError
+	 * @throws JNIGetFieldValueError
+	 * @throws JNISetFieldValueError
+	 */
     template <typename T>
     jobject newNativeResource(JNIEnv *env, const char *clsName, T *ptr) noexcept(false)
-    // throws: JNIFindClassError, JNIGetIdError, JNINewObjectError,
-    //         JNIGetObjectClassError, JNIGetFieldValueError, JNISetFieldValueError
     {
         jobject jobj = Util::newInstance(env, clsName);
 
@@ -184,7 +182,17 @@ namespace Util {
     }
 
 
-    extern void setWrapperObj(JNIEnv *env, jobject wrapper, jobject obj);
+	/**
+	 *
+	 * @param env
+	 * @param wrapper
+	 * @param obj
+	 *
+	 * @throws JNIGetObjectClassError
+	 * @throws JNIGetIdError
+	 * @throws JNISetFieldValueError
+	 */
+    extern void setWrapperObj(JNIEnv *env, jobject wrapper, jobject obj) noexcept(false);
 
 
     inline jthrowable stopExceptionPropagation(JNIEnv *env)
@@ -213,20 +221,6 @@ namespace Util {
                                      const char *message, const char *funcName, const char *locationInfo);
     extern jint throwNativeException(JNIEnv *env, jthrowable cause, jclass cls,
                                      const char *message, const char *funcName, const char *locationInfo);
-
-
-    extern bool checkAndThrowException(JNIEnv *env,
-                                       const char *message, const char *locationInfo, const char *funcName);
-    extern bool checkAndThrowException(JNIEnv *env, jobject obj,
-                                       const char *message, const char *locationInfo, const char *funcName);
-    extern bool checkAndThrowException(JNIEnv *env, jclass cls,
-                                       const char *message, const char *locationInfo, const char *funcName);
-    extern bool checkAndThrowException(JNIEnv *env, const void *to_verify,
-                                       const char *message, const char *locationInfo, const char *funcName);
-    extern bool checkAndThrowException(JNIEnv *env, const void *to_verify, jclass cls,
-                                       const char *message, const char *locationInfo, const char *funcName);
-    extern bool checkAndThrowException(JNIEnv *env, const void *to_verify, jobject obj,
-                                       const char *message, const char *locationInfo, const char *funcName);
 
 
     template <typename RetType, typename DataType, typename AppliedFunc>
@@ -328,7 +322,16 @@ namespace Util {
         }
     };
 
-
+	/**
+	 *
+	 * @param env
+	 * @param array
+	 * @return
+	 *
+	 * @throws JNIGetObjectClassError
+	 * @throws JNIGetIdError
+	 * @throws JNIGetFieldValueError
+	 */
     template <typename T>
     T** jobjectArrayToCNULLTerminatedArray(JNIEnv *env, jobjectArray array) noexcept(false)
     // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError

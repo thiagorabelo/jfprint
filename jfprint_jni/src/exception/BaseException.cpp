@@ -59,3 +59,21 @@ const char* BaseException::what() const noexcept
 {
     return _what;
 }
+
+
+const char* BaseException::get_msg() const
+{
+    return msg;
+}
+
+
+const char* BaseException::get_location_info() const
+{
+    return location_info;
+}
+
+
+const char* BaseException::get_function_info() const
+{
+    return function_info;
+}

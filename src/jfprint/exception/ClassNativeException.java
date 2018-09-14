@@ -6,6 +6,7 @@ import static java.lang.String.format;
  *
  * @author thiago
  */
+// TODO: This is the worst name ever. Give me a better name.
 public class ClassNativeException extends NativeException {
 
     private Class cls;
@@ -15,8 +16,18 @@ public class ClassNativeException extends NativeException {
         this.cls = cls;
     }
 
+    public ClassNativeException(Throwable cause, Class cls, String msg, String when, String funcName, String locationInfo) {
+        super(cause, msg, when, funcName, locationInfo);
+        this.cls = cls;
+    }
+
     public ClassNativeException(Class cls, String msg, String funcName, String locationInfo) {
         super(msg, funcName, locationInfo);
+        this.cls = cls;
+    }
+
+    public ClassNativeException(Class cls, String msg, String when, String funcName, String locationInfo) {
+        super(msg, when, funcName, locationInfo);
         this.cls = cls;
     }
 

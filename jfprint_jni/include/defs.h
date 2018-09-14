@@ -37,6 +37,7 @@
 #define CLASS_PRINT_DATA                         CLASS_PATH(PrintData)
 
 #define CLASS_CODE_ERROR                         CLASS_PATH(exception/CodeError)
+// TODO: This is the worst name ever. Give me a better name.
 #define CLASS_CLASS_NATIVE_EXCEPTION             CLASS_PATH(exception/ClassNativeException)
 #define CLASS_NATIVE_EXCEPTION                   CLASS_PATH(exception/NativeException)
 #define CLASS_NATIVE_CAN_NOT_FIND_EXCEPTION      CLASS_PATH(exception/NativeCanNotFindException)

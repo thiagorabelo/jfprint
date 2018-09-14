@@ -24,28 +24,6 @@
 
 namespace Util {
 
-//    JNIHelper::JNIHelper(JNIEnv* env)
-//    {
-//    }
-//
-//    JNIHelper::JNIHelper(JNIHelper& orig)
-//    {
-//    }
-//
-//    JNIHelper::~JNIHelper()
-//    {
-//    }
-//
-//    jclass JNIHelper::getObjectClass(jobject obj)
-//    {
-//        return nullptr;
-//    }
-//
-//    jclass JNIHelper::findClass(const char clsName)
-//    {
-//        return nullptr;
-//    }
-
 
     void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName) noexcept(false)
     // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError
@@ -53,20 +31,20 @@ namespace Util {
 		jclass cls = env->GetObjectClass(obj);
         if (NULL == cls) {
             err("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetObjectClassError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get object class", LOCATION_INFO, FUNC_DESC);
         }
 
 		jfieldID pointerId = env->GetFieldID(cls, fieldName, CLASS_BYTE_BUFFER);
         if (NULL == pointerId) {
             err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
         }
 
 		jobject pointer = env->GetObjectField(obj, pointerId);
 
 		if (NULL == pointer) {
 			err("On get 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetFieldValueError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get 'pointer' value", LOCATION_INFO, FUNC_DESC);
 		}
 
 		return static_cast<void**>(env->GetDirectBufferAddress(pointer));
@@ -80,31 +58,31 @@ namespace Util {
         jclass cls = env->GetObjectClass(obj);
         if (NULL == cls) {
             err("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetObjectClassError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get object class", LOCATION_INFO, FUNC_DESC);
         }
 
         jfieldID pointerId = env->GetFieldID(cls,  fieldName, CLASS_BYTE_BUFFER);
         if (NULL == pointerId || env->ExceptionCheck()) {
             err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject oldPointer = env->GetObjectField(obj, pointerId);
         if (env->ExceptionCheck()) {
             err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject pointer = env->NewDirectByteBuffer(address, size);
         if (NULL == pointer) {
             err("On get 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetFieldValueError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get 'pointer' value", LOCATION_INFO, FUNC_DESC);
         }
 
         env->SetObjectField(obj, pointerId, pointer);
         if (env->ExceptionCheck()) {
             err("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNISetFieldValueError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On set field value", LOCATION_INFO, FUNC_DESC);
         }
 
         if (NULL == oldPointer) {
@@ -208,7 +186,7 @@ namespace Util {
             throw JNIGetObjectClassError(LOCATION_INFO, FUNC_DESC);
         }
 
-        jfieldID fid = env->GetFieldID(cls, "obj", CLASS_NATIVE_RESOURCE);
+        jfieldID fid = env->GetFieldID(cls, "obj", CLASS_WRAPPER);
         if (NULL == fid) {
             err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
@@ -268,14 +246,26 @@ namespace Util {
 
     jint throwNativeException(JNIEnv *env, const char *message, const char *funcName, const char *locationInfo)
     {
+        err(message, " - ", locationInfo, ", ", funcName);
+
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
 
-        jclass cls = env->FindClass(CLASS_NATIVE_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(cls, "<init>", CONSTRUCTOR_NATIVE_EXCEPTION);
+        jclass cls;
+        jmethodID cttr;
+        jthrowable excpt;
 
-        jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, jmessage, jfuncName, jlocationInfo));
+        if (env->ExceptionCheck()) {
+            cls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
+            cttr = env->GetMethodID(cls, "<init>", CONSTRUCTOR_NATIVE_EXCEPTION_CAUSE);
+            jthrowable cause = Util::stopExceptionPropagation(env);
+            excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, cause, jmessage, jfuncName, jlocationInfo));
+        } else {
+            cls = env->FindClass(CLASS_NATIVE_EXCEPTION);
+            cttr = env->GetMethodID(cls, "<init>", CONSTRUCTOR_NATIVE_EXCEPTION);
+            excpt = reinterpret_cast<jthrowable>(env->NewObject(cls, cttr, jmessage, jfuncName, jlocationInfo));
+        }
 
         return env->Throw(excpt);
     }
@@ -284,15 +274,28 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jclass cls,
                               const char *message, const char *funcName, const char *locationInfo)
     {
+        err(message, " - ", locationInfo, ", ", funcName);
+
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
 
-        jclass excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION);
+        jclass excls;
+        jmethodID cttr;
+        jthrowable excpt;
 
-        jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(excls, cttr, cls,
-                                                                       jmessage, jfuncName, jlocationInfo));
+        if (env->ExceptionCheck()) {
+            excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
+            cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION_CAUSE);
+            jthrowable cause = Util::stopExceptionPropagation(env);
+            excpt = reinterpret_cast<jthrowable>(env->NewObject(excls, cttr, cause, cls,
+                                                                jmessage, jfuncName, jlocationInfo));
+        } else {
+            excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
+            cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION);
+            excpt = reinterpret_cast<jthrowable>(env->NewObject(excls, cttr, cls,
+                                                                jmessage, jfuncName, jlocationInfo));
+        }
 
         return env->Throw(excpt);
     }
@@ -301,17 +304,31 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jobject obj,
                               const char *message, const char *funcName, const char *locationInfo)
     {
+        err(message, " - ", locationInfo, ", ", funcName);
+
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
 
-        jclass excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
-        jmethodID cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION);
+        jclass excls;
+        jmethodID cttr;
+        jclass cls;;
+        jthrowable excpt;
 
-        jclass cls = env->GetObjectClass(obj);
-
-        jthrowable excpt = reinterpret_cast<jthrowable>(env->NewObject(excls, cttr, cls,
-                                                                       jmessage, jfuncName, jlocationInfo));
+        if (env->ExceptionCheck()) {
+            excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
+            cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION_CAUSE);
+            cls = env->GetObjectClass(obj);
+            jthrowable cause = Util::stopExceptionPropagation(env);
+            excpt = reinterpret_cast<jthrowable>(env->NewObject(excls, cttr, cause, cls,
+                                                                jmessage, jfuncName, jlocationInfo));
+        } else {
+            excls = env->FindClass(CLASS_CLASS_NATIVE_EXCEPTION);
+            cttr = env->GetMethodID(excls, "<init>", CONSTRUCTOR_CLASS_NATIVE_EXCEPTION);
+            cls = env->GetObjectClass(obj);
+            excpt = reinterpret_cast<jthrowable>(env->NewObject(excls, cttr, cls,
+                                                                jmessage, jfuncName, jlocationInfo));
+        }
 
         return env->Throw(excpt);
     }
@@ -320,6 +337,8 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jthrowable cause,
                               const char *message, const char *funcName, const char *locationInfo)
     {
+        err(message, " - ", locationInfo, ", ", funcName);
+
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
@@ -337,6 +356,8 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jthrowable cause, jobject obj,
                               const char *message, const char *funcName, const char *locationInfo)
     {
+        err(message, " - ", locationInfo, ", ", funcName);
+
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
@@ -356,6 +377,8 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jthrowable cause, jclass cls,
                               const char *message, const char *funcName, const char *locationInfo)
     {
+        err(message, " - ", locationInfo, ", ", funcName);
+
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
         jstring jlocationInfo = env->NewStringUTF(locationInfo);
@@ -367,111 +390,6 @@ namespace Util {
                                                                        jmessage, jfuncName, jlocationInfo));
 
         return env->Throw(excpt);
-    }
-
-
-    bool checkAndThrowException(JNIEnv *env,
-                                const char *message, const char *locationInfo, const char *funcName)
-    {
-        if (env->ExceptionCheck()) {
-            err(message, " - ", locationInfo, ", ", funcName);
-            jthrowable cause = Util::stopExceptionPropagation(env);
-            Util::throwNativeException(env, cause, message, funcName, locationInfo);
-
-            return true;
-        }
-
-        return false;
-    }
-
-
-    bool checkAndThrowException(JNIEnv *env, jobject obj,
-                                const char *message, const char *locationInfo, const char *funcName)
-    {
-        if (env->ExceptionCheck()) {
-            err(message, " - ", locationInfo, ", ", funcName);
-            jthrowable cause = Util::stopExceptionPropagation(env);
-            Util::throwNativeException(env, cause, obj, message, funcName, locationInfo);
-
-            return true;
-        }
-
-        return false;
-    }
-
-
-    bool checkAndThrowException(JNIEnv *env, jclass cls,
-                                const char *message, const char *locationInfo, const char *funcName)
-    {
-        if (env->ExceptionCheck()) {
-            err(message, " - ", locationInfo, ", ", funcName);
-            jthrowable cause = Util::stopExceptionPropagation(env);
-            Util::throwNativeException(env, cause, cls, message, funcName, locationInfo);
-
-            return true;
-        }
-
-        return false;
-    }
-
-
-    bool checkAndThrowException(JNIEnv *env, const void *to_verify,
-                                const char *message, const char *locationInfo, const char *funcName)
-    {
-        if (NULL == to_verify) {
-            err(message, " - ", locationInfo, ", ", funcName);
-
-            if (env->ExceptionCheck()) {
-                jthrowable cause = Util::stopExceptionPropagation(env);
-                Util::throwNativeException(env, cause, message, funcName, locationInfo);
-            } else {
-                Util::throwNativeException(env, message, funcName, locationInfo);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-
-    bool checkAndThrowException(JNIEnv *env, const void *to_verify, jclass cls,
-                                const char *message, const char *locationInfo, const char *funcName)
-    {
-        if (NULL == to_verify) {
-            err(message, " - ", locationInfo, ", ", funcName);
-
-            if (env->ExceptionCheck()) {
-                jthrowable cause = Util::stopExceptionPropagation(env);
-                Util::throwNativeException(env, cause, cls, message, funcName, locationInfo);
-            } else {
-                Util::throwNativeException(env, cls, message, funcName, locationInfo);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-
-    bool checkAndThrowException(JNIEnv *env, const void *to_verify, jobject obj,
-                                const char *message, const char *locationInfo, const char *funcName)
-    {
-        if (NULL == to_verify) {
-            err(message, " - ", locationInfo, ", ", funcName);
-
-            if (env->ExceptionCheck()) {
-                jthrowable cause = Util::stopExceptionPropagation(env);
-                Util::throwNativeException(env, cause, obj, message, funcName, locationInfo);
-            } else {
-                Util::throwNativeException(env, obj, message, funcName, locationInfo);
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
 };
