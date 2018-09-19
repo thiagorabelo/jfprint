@@ -13,15 +13,15 @@ JNIEXPORT void JNICALL Java_jfprint_PrintData_nativeClose
 {
     log("Running ", FUNC_DESC);
 
-    fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
+    Util::JNIHandler h(env);
 
-    if (Util::checkAndThrowException(env, print_data, obj,
-                                     CAN_NOT_ACCESS_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
-        return;
+    try {
+        fp_print_data **print_data = h.getPointer<fp_print_data>(obj);
+        fp_print_data_free(*print_data);
+        delete print_data;
+    } catch (JNIGetPointerError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
     }
-
-    fp_print_data_free(*print_data);
-    delete print_data;
 }
 
 
@@ -30,40 +30,36 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_fp_1getData
 {
     log("Running ", FUNC_DESC);
 
-    fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
-
-    if (Util::checkAndThrowException(env, print_data, obj,
-                                     CAN_NOT_ACCESS_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
-        return NULL;
-    }
-
+    Util::JNIHandler h(env);
     unsigned char *data = NULL;
-    size_t array_size = fp_print_data_get_data(*print_data, &data);
 
-    if (NULL == data || array_size == 0) {
-        log(UNABLE_GET_PRINT_DATA " " LOCATION_INFO ", ", FUNC_DESC);
+    try {
+        fp_print_data **print_data = h.getPointer<fp_print_data>(obj);
 
-        Util::throwOperationError(env, UNABLE_GET_PRINT_DATA);
+        size_t array_size = fp_print_data_get_data(*print_data, &data);
 
-        return NULL;
-    }
+        // TODO: throw exception if array_size > INT_MAX (#include <climits>)
 
-    jbyteArray byteArray = env->NewByteArray(static_cast<jsize>(array_size));
+        if (NULL == data || array_size == 0) {
+            log(UNABLE_GET_PRINT_DATA " " LOCATION_INFO ", ", FUNC_DESC);
+            Util::throwOperationError(env, UNABLE_GET_PRINT_DATA);
+            return NULL;
+        }
 
-    if (Util::checkAndThrowException(env, byteArray,
-                                     CAN_NOT_INSTANTIATE("Java byte array"), LOCATION_INFO, FUNC_DESC)) {
+        jbyteArray byteArray = h.newByteArray(array_size, reinterpret_cast<jbyte*>(data));
+
         free(data);
+
+        return byteArray;
+    } catch (JNIGenericError& ex) {
+        if (NULL != data) {
+            free(data);
+        }
+
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
+
         return NULL;
     }
-
-    env->SetByteArrayRegion(byteArray, 0, static_cast<jsize>(array_size), reinterpret_cast<jbyte*>(data));
-
-    if (Util::checkAndThrowException(env, obj, UNABLE_POPULATE_BYTE_ARRAY, LOCATION_INFO, FUNC_DESC)) {
-        free(data);
-        return NULL;
-    }
-
-    return byteArray;
 }
 
 
@@ -72,57 +68,31 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
 {
     log("Running ", FUNC_DESC);
 
-    jsize jArraySize = env->GetArrayLength(jdata);
+    Util::JNIHandler h(env);
+    jbyte *buf;
 
-    if (jArraySize <= 0) {
-        log("Array is empty. " LOCATION_INFO ", ", FUNC_DESC);
-        Util::throwOperationError(env, "Array is empty");
-        return NULL;
-    } else if (env->ExceptionCheck()) { // Possible NullPointerException
-        return NULL;
-    }
+    try {
+        jsize jArraySize = env->GetArrayLength(jdata);
+        buf = h.fromByteArray(jdata);
 
-    jbyte *buf = new jbyte[jArraySize];
-    env->GetByteArrayRegion(jdata, 0, jArraySize, buf);
+        fp_print_data *print_data = fp_print_data_from_data(reinterpret_cast<unsigned char*>(buf),
+                                                            static_cast<size_t>(jArraySize));
+        if (NULL == print_data) {
+            log(UNABLE_GET_PRINT_DATA " " LOCATION_INFO ", ", FUNC_DESC);
+            Util::throwOperationError(env, UNABLE_GET_PRINT_DATA);
+            delete [] buf;
+            return NULL;
+        }
 
-    if (env->ExceptionCheck()) {
-        err("ArrayIndexOutOfBoundsException on copy of jByteArray. " LOCATION_INFO ", ", FUNC_DESC);
-        delete [] buf;
-        return NULL;
-    }
+        return h.newNativeResource(cls, print_data);
+    } catch (JNIGenericError& ex) {
+        if (NULL != buf) {
+            delete buf;
+        }
 
-    fp_print_data *print_data = fp_print_data_from_data(reinterpret_cast<unsigned char*>(buf),
-                                                        static_cast<size_t>(jArraySize));
-    if (NULL == print_data) {
-        log(UNABLE_GET_PRINT_DATA " " LOCATION_INFO ", ", FUNC_DESC);
-        Util::throwOperationError(env, UNABLE_GET_PRINT_DATA);
-        fp_print_data_free(print_data);
-        delete [] buf;
+        Util::throwNativeException(env, cls, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return NULL;
     }
-
-    delete [] buf;
-
-    jobject jprintData = Util::newInstance(env, cls);
-
-    if (Util::checkAndThrowException(env, jprintData, cls,
-                                     CAN_NOT_INSTANTIATE(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
-        fp_print_data_free(print_data);
-        return NULL;
-    }
-
-    fp_print_data **p_print_data = new fp_print_data*;
-    *p_print_data = print_data;
-
-    Util::setPointerAddress(env, jprintData, "pointer", p_print_data, sizeof(fp_print_data*));
-
-    if (Util::checkAndThrowException(env, cls, CAN_NOT_SET_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
-        fp_print_data_free(print_data);
-        delete p_print_data;
-        return NULL;
-    }
-
-    return jprintData;
 }
 
 
@@ -131,14 +101,14 @@ JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1dataSave
 {
     log("Running ", FUNC_DESC);
 
-    fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
+    Util::JNIHandler h(env);
 
-    if (Util::checkAndThrowException(env, print_data, obj,
-                                     CAN_NOT_ACCESS_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
-        return 0;
+    try {
+        fp_print_data **print_data = h.getPointer<fp_print_data>(obj);
+        return fp_print_data_save(*print_data, static_cast<fp_finger>(finger));
+    } catch (JNIGetPointerError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
     }
-
-    return fp_print_data_save(*print_data, static_cast<fp_finger>(finger));
 }
 
 
@@ -147,43 +117,28 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1dataLoad
 {
     log("Running ", FUNC_DESC);
 
-    fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, device, "pointer"));
-
-    if (Util::checkAndThrowException(env, dev, cls, CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
-        return NULL;
-    }
-
+    Util::JNIHandler h(env);
     fp_print_data *print_data = NULL;
 
-    int ret = fp_print_data_load(*dev, static_cast<fp_finger>(finger), &print_data);
+    try {
+        fp_dev **dev = h.getPointer<fp_dev>(device);
 
-    if (ret != 0) {
-        log(CAN_NOT_LOAD_PRINT_DATA " - " LOCATION_INFO ", ", FUNC_DESC);
-        Util::throwOperationError(env, CAN_NOT_LOAD_PRINT_DATA);
-        return NULL;
+        int ret = fp_print_data_load(*dev, static_cast<fp_finger>(finger), &print_data);
+
+        if (ret != 0) {
+            log(CAN_NOT_LOAD_PRINT_DATA " - " LOCATION_INFO ", ", FUNC_DESC);
+            Util::throwOperationError(env, CAN_NOT_LOAD_PRINT_DATA);
+            return NULL;
+        }
+
+        return h.newNativeResource(cls, print_data);
+    } catch (JNIGenericError& ex) {
+        if (NULL != print_data) {
+            fp_print_data_free(print_data);
+        }
+
+        Util::throwNativeException(env, cls, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
     }
-
-
-    jobject jprintData = Util::newInstance(env, cls);
-
-    if (Util::checkAndThrowException(env, jprintData, cls,
-                                     CAN_NOT_INSTANTIATE(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
-        fp_print_data_free(print_data);
-        return NULL;
-    }
-
-    fp_print_data **p_print_data = new fp_print_data*;
-    *p_print_data = print_data;
-
-    Util::setPointerAddress(env, jprintData, "pointer", p_print_data, sizeof(fp_print_data*));
-
-    if (Util::checkAndThrowException(env, cls, CAN_NOT_SET_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
-        delete p_print_data;
-        fp_print_data_free(print_data);
-        return NULL;
-    }
-
-    return jprintData;
 }
 
 
@@ -192,59 +147,48 @@ JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1delete
 {
     log("Running ", FUNC_DESC);
 
-    fp_dev **dev = reinterpret_cast<fp_dev**>(Util::getPointerAddress(env, device, "pointer"));
+    Util::JNIHandler h(env);
 
-    if (Util::checkAndThrowException(env, dev, cls,
-                                     CAN_NOT_ACCESS_POINTER(CLASS_DEVICE), LOCATION_INFO, FUNC_DESC)) {
+    try {
+        fp_dev **dev = h.getPointer<fp_dev>(device);
+        return fp_print_data_delete(*dev, static_cast<fp_finger>(finger));
+    } catch (JNIGetPointerError& ex) {
+        Util::throwNativeException(env, cls, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return 0;
     }
-
-    return fp_print_data_delete(*dev, static_cast<fp_finger>(finger));
 }
 
-
+// TODO: A return code of -ENOENT indicates that the file referred to by the discovered
+//       print could not be found. Other error codes (both positive and negative) are
+//       possible for obscure error conditions (e.g. corruption).
+//       HOW CODE MUST HANDLE -ENOENT?
 JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromDiscoveredPrint
   (JNIEnv *env, jclass cls, jobject discoveredPrint)
 {
     log("Running ", FUNC_DESC);
 
-    fp_dscv_print **discovered_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, discoveredPrint, "pointer"));
-
-    if (Util::checkAndThrowException(env, discovered_print, cls,
-                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
-        return NULL;
-    }
-
+    Util::JNIHandler h(env);
     fp_print_data *data = NULL;
 
-    int ret = fp_print_data_from_dscv_print(*discovered_print, &data);
+    try {
+        fp_dscv_print **discovered_print = h.getPointer<fp_dscv_print>(discoveredPrint);
+        int ret = fp_print_data_from_dscv_print(*discovered_print, &data);
 
-    if (0 != ret) {
-        log("Error while obtaining print data from discovered print. " LOCATION_INFO ", ", FUNC_DESC);
-        Util::throwOperationError(env, "Error while obtaining print data from discovered print");
+        if (0 != ret) {
+            log("Error while obtaining print data from discovered print - " LOCATION_INFO ", ", FUNC_DESC);
+            Util::throwOperationError(env, "Error while obtaining print data from discovered print");
+            return NULL;
+        }
+
+        return h.newNativeResource(cls, data);
+    } catch (JNIGenericError& ex) {
+        if (NULL != data) {
+            fp_print_data_free(data);
+        }
+
+        Util::throwNativeException(env, cls, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return NULL;
     }
-
-    jobject jprintData = Util::newInstance(env, cls);
-
-    if (Util::checkAndThrowException(env, jprintData, cls,
-                                     CAN_NOT_INSTANTIATE(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
-        fp_print_data_free(data);
-        return NULL;
-    }
-
-    fp_print_data **p_data = new fp_print_data*;
-    *p_data = data;
-
-    Util::setPointerAddress(env, jprintData, "pointer", p_data, sizeof(fp_print_data*));
-
-    if (Util::checkAndThrowException(env, cls, CAN_NOT_SET_POINTER(CLASS_PRINT_DATA), LOCATION_INFO, FUNC_DESC)) {
-        delete p_data;
-        fp_print_data_free(data);
-        return NULL;
-    }
-
-    return jprintData;
 }
 
 
@@ -253,16 +197,15 @@ JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDriverId
 {
     log("Running ", FUNC_DESC);
 
-//    fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
-//    return static_cast<jlong>(fp_print_data_get_driver_id(*print_data));
+    Util::JNIHandler h(env);
 
-    long id = Util::applyFuncToPointer<jlong, fp_print_data>(env, obj, "pointer", fp_print_data_get_driver_id, 0L);
-
-    if (Util::checkAndThrowException(env, obj, CAN_NOT_RETRIEVE_DRIVER_ID, LOCATION_INFO, FUNC_DESC)) {
+    try {
+        fp_print_data **print_data = h.getPointer<fp_print_data>(obj);
+        return static_cast<jlong>(fp_print_data_get_driver_id(*print_data));
+    } catch (JNIGetPointerError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return 0L;
     }
-
-    return id;
 }
 
 
@@ -271,14 +214,13 @@ JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDevtype
 {
     log("Running ", FUNC_DESC);
 
-//    fp_print_data **print_data = reinterpret_cast<fp_print_data**>(Util::getPointerAddress(env, obj, "pointer"));
-//    return static_cast<jlong>(fp_print_data_get_devtype(*print_data));
+    Util::JNIHandler h(env);
 
-    long devType = Util::applyFuncToPointer<jlong, fp_print_data>(env, obj, "pointer", fp_print_data_get_devtype, 0L);
-
-    if (Util::checkAndThrowException(env, obj, CAN_NOT_RETRIEVE_DRIVER_TYPE, LOCATION_INFO, FUNC_DESC)) {
+    try {
+        fp_print_data **print_data = h.getPointer<fp_print_data>(obj);
+        return static_cast<jlong>(fp_print_data_get_devtype(*print_data));
+    } catch (JNIGetPointerError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return 0L;
     }
-
-    return devType;
 }

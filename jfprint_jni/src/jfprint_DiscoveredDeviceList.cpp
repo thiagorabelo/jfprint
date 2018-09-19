@@ -11,7 +11,12 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredDeviceList_nativeClose
   (JNIEnv *env, jobject obj)
 {
     log("Running ", FUNC_DESC);
-    Util::DiscoveredItemsList::nativeClose<fp_dscv_dev>(env, obj, fp_dscv_devs_free);
+
+    try {
+        Util::DiscoveredItemsList::nativeClose<fp_dscv_dev>(env, obj, fp_dscv_devs_free);
+    } catch (JNIError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
+    }
 }
 
 
@@ -20,14 +25,16 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1get
 {
     log("Running ", FUNC_DESC);
 
-    jobject dscv_dev = Util::DiscoveredItemsList::nativeGet<fp_dscv_dev>(env, obj, index, CLASS_DISCOVERED_DEVICE);
-
-    if (Util::checkAndThrowException(env, dscv_dev, obj,
-                                     CAN_NOT_ACCESS_DISCOVERED("DiscoveredDevice"), LOCATION_INFO, FUNC_DESC)) {
+    try {
+        jobject dscv_dev = Util::DiscoveredItemsList::nativeGet<fp_dscv_dev>(env,
+                                                                             obj,
+                                                                             index,
+                                                                             CLASS_DISCOVERED_DEVICE);
+        return dscv_dev;
+    } catch (JNIError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return NULL;
     }
-
-    return dscv_dev;
 }
 
 
@@ -36,12 +43,14 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDeviceList_fp_1dicoverDevices
 {
     log("Running ", FUNC_DESC);
 
-    jobject dscv_dev_list = Util::DiscoveredItemsList::discover<fp_dscv_dev>(env, cls, fp_discover_devs);
-
-    if (Util::checkAndThrowException(env, dscv_dev_list, cls,
-                                     CAN_NOT_ACCESS_DISCOVERED_LIST("discovered devices"), LOCATION_INFO, FUNC_DESC)) {
+    try {
+        jobject dscv_dev_list = Util::DiscoveredItemsList::discover<fp_dscv_dev>(env,
+                                                                                 cls,
+                                                                                 fp_discover_devs,
+                                                                                 fp_dscv_devs_free);
+        return dscv_dev_list;
+    } catch (JNIError& ex) {
+        Util::throwNativeException(env, cls, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return NULL;
     }
-
-    return dscv_dev_list;
 }

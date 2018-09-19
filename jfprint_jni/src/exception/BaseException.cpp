@@ -35,14 +35,14 @@ static void build_what_msg(char **dest, const char* msg,
 
 BaseException::BaseException(const char* msg,
                              const char* location_info,
-                             const char* function_info)
+                             const char* function_info) noexcept
 : std::exception(), msg(msg), location_info(location_info), function_info(function_info)
 {
     build_what_msg(const_cast<char**>(&_what), msg, location_info, function_info);
 }
 
 
-BaseException::BaseException(const BaseException& orig)
+BaseException::BaseException(const BaseException& orig) noexcept
 : std::exception(), msg(orig.msg), location_info(orig.location_info), function_info(orig.function_info)
 {
     build_what_msg(const_cast<char**>(&_what), msg, location_info, function_info);
@@ -61,19 +61,19 @@ const char* BaseException::what() const noexcept
 }
 
 
-const char* BaseException::get_msg() const
+const char* BaseException::get_msg() const noexcept
 {
     return msg;
 }
 
 
-const char* BaseException::get_location_info() const
+const char* BaseException::get_location_info() const noexcept
 {
     return location_info;
 }
 
 
-const char* BaseException::get_function_info() const
+const char* BaseException::get_function_info() const noexcept
 {
     return function_info;
 }

@@ -22,11 +22,11 @@ class JNIError : public BaseException
 };
 
 
-class JNIPointerError : std::exception
+class JNIGenericError : public std::exception
 {
 	public:
-		JNIPointerError(JNIError& cause) noexcept;
-		~JNIPointerError() noexcept;
+		JNIGenericError(JNIError& cause) noexcept;
+		~JNIGenericError() noexcept;
 
 		virtual const char* what() const noexcept;
 		virtual const char* get_msg() const noexcept;
@@ -35,6 +35,62 @@ class JNIPointerError : std::exception
 
 	private:
 		JNIError& cause;
+};
+
+
+class JNIGetPointerError : public JNIGenericError
+{
+	public:
+		JNIGetPointerError(JNIError& cause) noexcept;
+		~JNIGetPointerError() noexcept;
+};
+
+
+class JNISetPointerError : public JNIGenericError
+{
+	public:
+		JNISetPointerError(JNIError& cause) noexcept;
+		~JNISetPointerError() noexcept;
+};
+
+
+class JNINewInstanceError : public JNIGenericError
+{
+	public:
+		JNINewInstanceError(JNIError& cause) noexcept;
+		~JNINewInstanceError() noexcept;
+};
+
+
+class JNISetWrapperObjError : public JNIGenericError
+{
+	public:
+		JNISetWrapperObjError(JNIError& cause) noexcept;
+		~JNISetWrapperObjError() noexcept;
+};
+
+
+class JNICNULLTerminatedError : public JNIGenericError
+{
+	public:
+		JNICNULLTerminatedError(JNIError& cause) noexcept;
+		~JNICNULLTerminatedError() noexcept;
+};
+
+
+class JNINewByteArrayError : public JNIGenericError
+{
+	public:
+		JNINewByteArrayError(JNIError& cause) noexcept;
+		~JNINewByteArrayError() noexcept;
+};
+
+
+class JNIByteArrayError : public JNIGenericError
+{
+	public:
+		JNIByteArrayError(JNIError& cause) noexcept;
+		~JNIByteArrayError() noexcept;
 };
 
 

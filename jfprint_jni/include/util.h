@@ -55,143 +55,67 @@ namespace Util {
 	{
 		public:
 			JNIHandler(JNIEnv* env);
-			~JNIHanlder();
+			virtual ~JNIHandler();
+
+			void* setPointer(jobject obj, void *address, size_t size) noexcept(false);
+			jobject newInstance(const char* clsName);
+			jobject newInstance(jclass cls);
+			jobject newResultTuple(int code) noexcept(false);
+			jobject newResultTuple(jobject obj, int code) noexcept(false);
+			void setWrapperObj(jobject wrapper, jobject obj) noexcept(false);
+			jbyteArray newByteArray(jsize size, jbyte *buf) noexcept(false);
+			jbyte *fromByteArray(jbyteArray byteArray) noexcept(false);
+
 
 			template <typename T>
-			T** getPointer(jobject obj) noexcept(false)
-			{
-				try {
-					return reinterpret_cast<T**>Util::getPointerAddress(env, obj, "pointer");
-				} catch (JNIError& error) {
-					throw JNIPointerError(error);
-				}
-			}
+			T** getPointer(jobject obj) noexcept(false);
+
+			template <typename T>
+			T** toCNULLTerminatedArray(jobjectArray javaArrayObject) noexcept(false);
+
+		    template <typename T>
+		    jobject newNativeResource(jclass cls, T *ptr) noexcept(false);
+
+		    template <typename T>
+		    jobject newNativeResource(const char *clsName, T *ptr) noexcept(false);
+
 		private:
 			JNIEnv* env;
 	};
 
-    /**
-	 *
-	 * @param env
-	 * @param obj
-	 * @param fieldName
-	 * @return
-	 *
-	 * @throws JNIGetObjectClassError
-	 * @throws JNIGetIdError
-	 * @throws JNIGetFieldValueError
-	 */
+
     extern void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName) noexcept(false) ;
 
-	/**
-	 *
-	 * @param env
-	 * @param obj
-	 * @param fieldName
-	 * @param address
-	 * @param size
-	 * @return
-	 *
-	 * @throws JNIGetObjectClassError
-	 * @throws JNIGetIdError
-	 * @throws JNIGetFieldValueError
-	 * @throws JNISetFieldValueError
-	 */
+
     extern void* setPointerAddress(JNIEnv *env, jobject obj, const char *fieldName, void *address, size_t size) noexcept(false);
 
 
-	/**
-	 *
-	 * @param env
-	 * @param clsName
-	 * @return
-	 *
-	 * @throws JNIFindClassError
-	 * @throws JNIGetIdError
-	 * @throws JNINewObjectError
-	 */
     extern jobject newInstance(JNIEnv *env, const char *clsName) noexcept(false);
 
-	/**
-	 *
-	 * @param env
-	 * @param cls
-	 * @return
-	 *
-	 * @throws JNIGetIdError
-	 * @throws JNINewObjectError
-	 */
+
     extern jobject newInstance(JNIEnv *env, jclass cls) noexcept(false);
 
-	/**
-	 *
-	 * @param env
-	 * @param code
-	 * @return
-	 *
-	 * @throws JNIFindClassError
-	 * @throws JNIGetIdError
-	 * @throws JNINewObjectError
-	 */
+
+	template <typename T>
+    jobject newNativeResource(JNIEnv *env, const char *clsName, T *ptr) noexcept(false);
+
+
+    template <typename T>
+    jobject newNativeResource(JNIEnv *env, jclass cls, T *ptr) noexcept(false);
+
+
     extern jobject newResultTuple(JNIEnv *env, int code) noexcept(false);
 
-	/**
-	 *
-	 * @param env
-	 * @param obj
-	 * @param code
-	 * @return
-	 *
-	 * @throws JNIFindClassError
-	 * @throws JNIGetIdError
-	 * @throws JNINewObjectError
-	 */
+
     extern jobject newResultTuple(JNIEnv *env, jobject obj, int code) noexcept(false);
 
 
-	/**
-	 *
-	 * @param env
-	 * @param clsName
-	 * @param ptr
-	 * @return
-	 *
-	 * @throws JNIFindClassError
-	 * @throws JNIGetIdError
-	 * @throws JNINewObjectError
-	 * @throws JNIGetObjectClassError
-	 * @throws JNIGetFieldValueError
-	 * @throws JNISetFieldValueError
-	 */
-    template <typename T>
-    jobject newNativeResource(JNIEnv *env, const char *clsName, T *ptr) noexcept(false)
-    {
-        jobject jobj = Util::newInstance(env, clsName);
-
-        T **p_ptr = new T*;
-        *p_ptr = ptr;
-
-        try {
-            Util::setPointerAddress(env, jobj, "pointer", p_ptr, sizeof(T*));
-        } catch (JNIError& ex) {
-            delete p_ptr;
-            throw;
-        }
-
-        return jobj;
-    }
+	extern jbyteArray newByteArray(JNIEnv *env, jsize size, jbyte* buf) noexcept(false);
 
 
-	/**
-	 *
-	 * @param env
-	 * @param wrapper
-	 * @param obj
-	 *
-	 * @throws JNIGetObjectClassError
-	 * @throws JNIGetIdError
-	 * @throws JNISetFieldValueError
-	 */
+	extern jbyte *fromByteArray(JNIEnv *env, jbyteArray byteArray) noexcept(false);
+
+
     extern void setWrapperObj(JNIEnv *env, jobject wrapper, jobject obj) noexcept(false);
 
 
@@ -210,29 +134,44 @@ namespace Util {
     extern jint throwException(JNIEnv *env, const char *clsName, const char *message);
 
     extern jint throwNativeException(JNIEnv *env,
-                                     const char *message, const char *funcName, const char *locationInfo);
+                                     const char *message, const char *locationInfo, const char *funcName);
     extern jint throwNativeException(JNIEnv *env, jclass cls,
-                                     const char *message, const char *funcName, const char *locationInfo);
+                                     const char *message, const char *locationInfo, const char *funcName);
     extern jint throwNativeException(JNIEnv *env, jobject obj,
-                                     const char *message, const char *funcName, const char *locationInfo);
+                                     const char *message, const char *locationInfo, const char *funcName);
     extern jint throwNativeException(JNIEnv *env, jthrowable cause,
-                                     const char *message, const char *funcName, const char *locationInfo);
+                                     const char *message, const char *locationInfo, const char *funcName);
     extern jint throwNativeException(JNIEnv *env, jthrowable cause, jobject obj,
-                                     const char *message, const char *funcName, const char *locationInfo);
+                                     const char *message, const char *locationInfo, const char *funcName);
     extern jint throwNativeException(JNIEnv *env, jthrowable cause, jclass cls,
-                                     const char *message, const char *funcName, const char *locationInfo);
-
-
-    template <typename RetType, typename DataType, typename AppliedFunc>
-    RetType applyFuncToPointer(JNIEnv *env, jobject obj, const char *fieldName, AppliedFunc fn, RetType nullVal) noexcept(false)
-    // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError
-    {
-        DataType **data = reinterpret_cast<DataType**>(Util::getPointerAddress(env, obj, fieldName));
-        return static_cast<RetType>(fn(*data));
-    }
+                                     const char *message, const char *locationInfo, const char *funcName);
 
 
     namespace DiscoveredItemsList {
+
+        template<typename T>
+        size_t getDiscoveredListSize(T **nullTerminatedList);
+
+
+        template<typename DiscoveredType>
+        jobject nativeGet(JNIEnv *env, jobject obj, jint index, const char *clsName) noexcept(false);
+
+
+        template <typename DiscoveredType, typename DiscoverFunc, typename FreeDiscoveredFunc>
+        jobject discover(JNIEnv *env, jclass cls, DiscoverFunc fn, FreeDiscoveredFunc fnFree) noexcept(false);
+
+        template<typename DiscoveredType, typename FreeFunc>
+        void nativeClose(JNIEnv *env, jobject obj, FreeFunc fn) noexcept(false);
+    };
+
+};
+
+
+
+
+namespace Util {
+
+	namespace DiscoveredItemsList {
 
         template<typename T>
         size_t getDiscoveredListSize(T **nullTerminatedList)
@@ -254,87 +193,70 @@ namespace Util {
 
         template<typename DiscoveredType>
         jobject nativeGet(JNIEnv *env, jobject obj, jint index, const char *clsName) noexcept(false)
-        // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError,
-        //         JNISetFieldValueError, JNIFindClassError, JNINewObjectError
         {
-          DiscoveredType **discovereds = reinterpret_cast<DiscoveredType**>(Util::getPointerAddress(env, obj, "pointer"));
+			DiscoveredType **discovereds = reinterpret_cast<DiscoveredType**>(Util::getPointerAddress(env, obj, "pointer"));
 
-          // By not having access to the structures defined in libfprint we
-          // must pass a pointer to pointer to the JNI.
-          // And we should remember to not delete the contents of this
-          // pointer when the close method is triggered.
-          DiscoveredType **p_discovered = &discovereds[index];
+			// By not having access to the structures defined in libfprint we
+			// must pass a pointer to pointer to the JNI.
+			// And we should remember to not delete the content of this
+			// pointer when the close method is triggered.
+			DiscoveredType *discovered = discovereds[index];
+			jobject jdiscovered = Util::newNativeResource(env, clsName, discovered);
 
-          jobject jdicovered = Util::newInstance(env, clsName);
-          Util::setPointerAddress(env, jdicovered, "pointer", p_discovered, sizeof(DiscoveredType*));
-
-          return jdicovered;
+			return jdiscovered;
         }
 
 
-        /**
-         *
-         *
-         * @param env
-         * @param cls
-         * @param ClassName
-         * @param fn
-         * @return
-         */
-        template <typename DiscoveredType, typename DiscoverFunc>
-        jobject discover(JNIEnv *env, jclass cls, DiscoverFunc fn) noexcept(false)
-        // throws: JNINewObjectError, JNIGetObjectClassError, JNIGetIdError,
-        //         JNIGetFieldValueError, JNISetFieldValueError
+        template <typename DiscoveredType, typename DiscoverFunc, typename FreeDiscoveredFunc>
+        jobject discover(JNIEnv *env, jclass cls, DiscoverFunc fn, FreeDiscoveredFunc fnFree) noexcept(false)
         {
-            jfieldID fidSize = env->GetFieldID(cls, "size", "I");
-            if (NULL == fidSize) {
-                err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
-                throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
-            }
+			jfieldID fidSize = env->GetFieldID(cls, "size", "I");
+			if (NULL == fidSize) {
+				err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+				throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
+			}
 
-            jobject jdiscovered_list = Util::newInstance(env, cls);
+			jobject jdiscovered_list = Util::newInstance(env, cls);
 
-            // There is no need to create a pointer to pointer,
-            // as this is done by the fprint library itself.
-            DiscoveredType **discovereds = fn();
-            size_t size = Util::DiscoveredItemsList::getDiscoveredListSize(discovereds);
+			// There is no need to create a pointer to pointer,
+			// as this is done by the fprint library itself.
+			DiscoveredType **discovereds = fn();
+			size_t size = Util::DiscoveredItemsList::getDiscoveredListSize(discovereds);
 
-            Util::setPointerAddress(env, jdiscovered_list, "pointer", discovereds, sizeof(DiscoveredType*));
+			try {
+				Util::setPointerAddress(env, jdiscovered_list, "pointer", discovereds, sizeof(DiscoveredType*));
+			} catch (JNIError& error) {
+				fnFree(discovereds);
+				throw;
+			}
 
-            env->SetIntField(jdiscovered_list, fidSize, static_cast<int>(size));
-            if (env->ExceptionCheck()) {
-                err("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
-                throw JNISetFieldValueError(LOCATION_INFO, FUNC_DESC);
-            }
+			env->SetIntField(jdiscovered_list, fidSize, static_cast<int>(size));
+			if (env->ExceptionCheck()) {
+				err("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
+				fnFree(discovereds);
+				throw JNIError("On set field value", LOCATION_INFO, FUNC_DESC);
+			}
 
-            return jdiscovered_list;
+			return jdiscovered_list;
         }
 
         template<typename DiscoveredType, typename FreeFunc>
         void nativeClose(JNIEnv *env, jobject obj, FreeFunc fn) noexcept(false)
         // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError
         {
-            DiscoveredType **discovereds = reinterpret_cast<DiscoveredType**>(Util::getPointerAddress(env, obj, "pointer"));
+			DiscoveredType **discovereds = reinterpret_cast<DiscoveredType**>(Util::getPointerAddress(env, obj, "pointer"));
 
-            // Do not freed the pointer to pointer.
-            // Let fprint do that.
-            fn(discovereds);
+			// Do not freed the pointer to pointer.
+			// Let fprint do that.
+			fn(discovereds);
         }
     };
 
-	/**
-	 *
-	 * @param env
-	 * @param array
-	 * @return
-	 *
-	 * @throws JNIGetObjectClassError
-	 * @throws JNIGetIdError
-	 * @throws JNIGetFieldValueError
-	 */
+
+
+
     template <typename T>
     T** jobjectArrayToCNULLTerminatedArray(JNIEnv *env, jobjectArray array) noexcept(false)
-    // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError
     {
         jsize size = env->GetArrayLength(array);
         T **data = new T*[size + 1];
@@ -355,6 +277,83 @@ namespace Util {
 
         return data;
     }
+
+
+
+	template <typename T>
+    jobject newNativeResource(JNIEnv *env, const char *clsName, T *ptr) noexcept(false)
+    {
+		jclass cls = env->FindClass(clsName);
+
+        if (NULL == cls) {
+            err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIError("On find class", LOCATION_INFO, FUNC_DESC);
+        }
+
+		return Util::newNativeResource(env, cls, ptr);
+    }
+
+
+    template <typename T>
+    jobject newNativeResource(JNIEnv *env, jclass cls, T *ptr) noexcept(false)
+    {
+        jobject jobj = Util::newInstance(env, cls);
+
+        T **p_ptr = new T*;
+        *p_ptr = ptr;
+
+        try {
+            Util::setPointerAddress(env, jobj, "pointer", p_ptr, sizeof(T*));
+        } catch (JNIError& ex) {
+            delete p_ptr;
+            throw;
+        }
+
+        return jobj;
+    }
+
+
+
+
+	template <typename T>
+	T** JNIHandler::getPointer(jobject obj) noexcept(false)
+	{
+		try {
+			return reinterpret_cast<T**>(Util::getPointerAddress(env, obj, "pointer"));
+		} catch (JNIError& error) {
+			throw JNIGetPointerError(error);
+		}
+	}
+
+	template <typename T>
+	T** JNIHandler::toCNULLTerminatedArray(jobjectArray javaArrayObject) noexcept(false)
+	{
+		try {
+			return Util::jobjectArrayToCNULLTerminatedArray<T>(env, javaArrayObject);
+		} catch (JNIError& error) {
+			throw JNICNULLTerminatedError(error);
+		}
+	}
+
+	template <typename T>
+	jobject JNIHandler::newNativeResource(const char *clsName, T *ptr) noexcept(false)
+	{
+		try {
+			return Util::newNativeResource(env, clsName, ptr);
+		} catch (JNIError& ex) {
+			throw JNINewInstanceError(ex);
+		}
+	}
+
+	template <typename T>
+	jobject JNIHandler::newNativeResource(jclass cls, T *ptr) noexcept(false)
+	{
+		try {
+			return Util::newNativeResource(env, cls, ptr);
+		} catch (JNIError& ex) {
+			throw JNINewInstanceError(ex);
+		}
+	}
 };
 
 

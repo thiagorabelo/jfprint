@@ -25,6 +25,88 @@
 namespace Util {
 
 
+    JNIHandler::JNIHandler(JNIEnv* env)
+    : env(env)
+    {
+    }
+
+    JNIHandler::~JNIHandler()
+    {
+    }
+
+    void* JNIHandler::setPointer(jobject obj, void *address, size_t size) noexcept(false)
+    {
+        try {
+            return Util::setPointerAddress(env, obj, "pointer", address, size);
+        } catch (JNIError& error) {
+            throw JNISetPointerError(error);
+        }
+    }
+
+    jobject JNIHandler::newInstance(const char* clsName)
+    {
+        try {
+            return Util::newInstance(env, clsName);
+        } catch (JNIError& cause) {
+            throw JNINewInstanceError(cause);
+        }
+    }
+
+    jobject JNIHandler::newInstance(jclass cls)
+    {
+        try {
+            return Util::newInstance(env, cls);
+        } catch (JNIError& cause) {
+            throw JNINewInstanceError(cause);
+        }
+    }
+
+    void JNIHandler::setWrapperObj(jobject wrapper, jobject obj)
+    {
+        try {
+            return Util::setWrapperObj(env, wrapper, obj);
+        } catch (JNIError& cause) {
+            throw JNISetWrapperObjError(cause);
+        }
+    }
+
+    jobject JNIHandler::newResultTuple(int code)
+    {
+        try {
+            return Util::newResultTuple(env, code);
+        } catch (JNIError& cause) {
+            throw JNINewInstanceError(cause);
+        }
+    }
+
+    jobject JNIHandler::newResultTuple(jobject obj, int code)
+    {
+        try {
+            return Util::newResultTuple(env, obj, code);
+        } catch (JNIError& cause) {
+            throw JNINewInstanceError(cause);
+        }
+    }
+
+    jbyteArray JNIHandler::newByteArray(jsize size, jbyte* buf)
+    {
+        try {
+            return Util::newByteArray(env, size, buf);
+        } catch (JNIError& cause) {
+            throw JNINewByteArrayError(cause);
+        }
+    }
+
+    jbyte *JNIHandler::fromByteArray(jbyteArray byteArray)
+    {
+        try {
+            return Util::fromByteArray(env, byteArray);
+        } catch (JNIError& cause) {
+            throw JNIByteArrayError(cause);
+        }
+    }
+
+
     void* getPointerAddress(JNIEnv *env, jobject obj, const char *fieldName) noexcept(false)
     // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError
 	{
@@ -100,7 +182,7 @@ namespace Util {
 
         if (NULL == cls) {
             err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIFindClassError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On find class", LOCATION_INFO, FUNC_DESC);
         }
 
         return Util::newInstance(env, cls);
@@ -113,13 +195,13 @@ namespace Util {
         jmethodID midInit = env->GetMethodID(cls, "<init>", "()V");
         if (NULL == midInit) {
             err("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get method id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject newInstance = env->NewObject(cls, midInit);
         if (NULL == newInstance || env->ExceptionCheck()) {
-            err("On instantiate a new object");
-            throw JNINewObjectError(LOCATION_INFO, FUNC_DESC);
+            err("On instantiate a new object" LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIError("On instantiate a new object", LOCATION_INFO, FUNC_DESC);
         }
 
         return newInstance;
@@ -132,20 +214,20 @@ namespace Util {
         jclass cls = env->FindClass(CLASS_RESULT_TUPLE);
         if (NULL == cls) {
             err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIFindClassError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On find class", LOCATION_INFO, FUNC_DESC);
         }
 
         jmethodID midInit = env->GetMethodID(cls, "<init>", CONSTRUCTOR_RESULT_TUPLE);
         if (NULL == midInit) {
             err("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get method id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject result = env->NewObject(cls, midInit, static_cast<jint>(code));
 
         if (NULL == result  || env->ExceptionCheck()) {
             err("On instantiate object - ", LOCATION_INFO, FUNC_DESC);
-            throw JNINewObjectError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On instantiate object", LOCATION_INFO, FUNC_DESC);
         }
 
         return result;
@@ -158,19 +240,19 @@ namespace Util {
         jclass cls = env->FindClass(CLASS_RESULT_TUPLE);
         if (NULL == cls) {
             err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIFindClassError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On find class", LOCATION_INFO, FUNC_DESC);
         }
 
         jmethodID midInit = env->GetMethodID(cls, "<init>", CONSTRUCTOR_RESULT_TUPLE_2);
         if (NULL == midInit) {
             err("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get method id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject result = env->NewObject(cls, midInit, obj, static_cast<jint>(code));
         if (NULL == result || env->ExceptionCheck()) {
             err("On instantiate object - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNINewObjectError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On instantiate object", LOCATION_INFO, FUNC_DESC);
         }
 
         return result;
@@ -183,20 +265,59 @@ namespace Util {
         jclass cls = env->GetObjectClass(wrapper);
         if (NULL == cls) {
             err("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetObjectClassError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get object class", LOCATION_INFO, FUNC_DESC);
         }
 
-        jfieldID fid = env->GetFieldID(cls, "obj", CLASS_WRAPPER);
+        jfieldID fid = env->GetFieldID(cls, "obj", CLASS_NATIVE_RESOURCE);
         if (NULL == fid) {
             err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNIGetIdError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
         }
 
         env->SetObjectField(wrapper, fid, obj);
         if (env->ExceptionCheck()) {
             err("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
-            throw JNISetFieldValueError(LOCATION_INFO, FUNC_DESC);
+            throw JNIError("On set field value", LOCATION_INFO, FUNC_DESC);
         }
+    }
+
+
+    jbyteArray newByteArray(JNIEnv *env, jsize size, jbyte* buf)
+    {
+        jbyteArray byteArray = env->NewByteArray(size);
+
+        if (NULL != byteArray || env->ExceptionCheck()) {
+            throw JNIError("On instantiate a new byte array", LOCATION_INFO, FUNC_DESC);
+        }
+
+        env->SetByteArrayRegion(byteArray, 0, size, buf);
+
+        if (env->ExceptionCheck()) {
+            throw JNIError("On set byte array region", LOCATION_INFO, FUNC_DESC);
+        }
+
+        return byteArray;
+    }
+
+
+    jbyte *fromByteArray(JNIEnv *env, jbyteArray byteArray)
+    {
+        jsize jArraySize = env->GetArrayLength(byteArray);
+
+        if (jArraySize <= 0) {
+            log("Array is empty - " LOCATION_INFO ", ", FUNC_DESC);
+            throw JNIError("Array is empty", LOCATION_INFO, FUNC_DESC);
+        }
+
+        jbyte *buf = new jbyte[jArraySize];
+        env->GetByteArrayRegion(byteArray, 0, jArraySize, buf);
+
+        if (env->ExceptionCheck()) {
+            delete buf;
+            throw JNIError("On copy data from Java byte array to buffer", LOCATION_INFO, FUNC_DESC);
+        }
+
+        return buf;
     }
 
 
@@ -244,7 +365,7 @@ namespace Util {
     }
 
 
-    jint throwNativeException(JNIEnv *env, const char *message, const char *funcName, const char *locationInfo)
+    jint throwNativeException(JNIEnv *env, const char *message, const char *locationInfo, const char *funcName)
     {
         err(message, " - ", locationInfo, ", ", funcName);
 
@@ -272,7 +393,7 @@ namespace Util {
 
 
     jint throwNativeException(JNIEnv *env, jclass cls,
-                              const char *message, const char *funcName, const char *locationInfo)
+                              const char *message, const char *locationInfo, const char *funcName)
     {
         err(message, " - ", locationInfo, ", ", funcName);
 
@@ -302,7 +423,7 @@ namespace Util {
 
 
     jint throwNativeException(JNIEnv *env, jobject obj,
-                              const char *message, const char *funcName, const char *locationInfo)
+                              const char *message, const char *locationInfo, const char *funcName)
     {
         err(message, " - ", locationInfo, ", ", funcName);
 
@@ -335,7 +456,7 @@ namespace Util {
 
 
     jint throwNativeException(JNIEnv *env, jthrowable cause,
-                              const char *message, const char *funcName, const char *locationInfo)
+                              const char *message, const char *locationInfo, const char *funcName)
     {
         err(message, " - ", locationInfo, ", ", funcName);
 
@@ -354,7 +475,7 @@ namespace Util {
 
 
     jint throwNativeException(JNIEnv *env, jthrowable cause, jobject obj,
-                              const char *message, const char *funcName, const char *locationInfo)
+                              const char *message, const char *locationInfo, const char *funcName)
     {
         err(message, " - ", locationInfo, ", ", funcName);
 
@@ -375,7 +496,7 @@ namespace Util {
 
 
     jint throwNativeException(JNIEnv *env, jthrowable cause, jclass cls,
-                              const char *message, const char *funcName, const char *locationInfo)
+                              const char *message, const char *locationInfo, const char *funcName)
     {
         err(message, " - ", locationInfo, ", ", funcName);
 

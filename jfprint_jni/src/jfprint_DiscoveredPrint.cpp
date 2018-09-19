@@ -20,14 +20,15 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getDriverId
 {
     log("Running ", FUNC_DESC);
 
-    fp_dscv_print **p_dscvrd_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
+    Util::JNIHandler h(env);
 
-    if (Util::checkAndThrowException(env, p_dscvrd_print, obj,
-                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
+    try {
+        fp_dscv_print **p_dscvrd_print = h.getPointer<fp_dscv_print>(obj);
+        return static_cast<int>(fp_dscv_print_get_driver_id(*p_dscvrd_print));
+    } catch (JNIGetPointerError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return 0;
     }
-
-    return static_cast<int>(fp_dscv_print_get_driver_id(*p_dscvrd_print));
 }
 
 
@@ -36,14 +37,15 @@ JNIEXPORT jlong JNICALL Java_jfprint_DiscoveredPrint_fp_1getDevtype
 {
     log("Running ", FUNC_DESC);
 
-    fp_dscv_print **p_dscvrd_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
+    Util::JNIHandler h(env);
 
-    if (Util::checkAndThrowException(env, p_dscvrd_print, obj,
-                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
-        return 0;
+    try {
+        fp_dscv_print **p_dscvrd_print = h.getPointer<fp_dscv_print>(obj);
+        return static_cast<long>(fp_dscv_print_get_devtype(*p_dscvrd_print));
+    } catch (JNIGetPointerError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
+        return 0L;
     }
-
-    return static_cast<long>(fp_dscv_print_get_devtype(*p_dscvrd_print));
 }
 
 
@@ -52,14 +54,15 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getFinger
 {
     log("Running ", FUNC_DESC);
 
-    fp_dscv_print **p_dscvrd_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
+    Util::JNIHandler h(env);
 
-    if (Util::checkAndThrowException(env, p_dscvrd_print, obj,
-                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
+    try {
+        fp_dscv_print **p_dscvrd_print = h.getPointer<fp_dscv_print>(obj);
+        return static_cast<int>(fp_dscv_print_get_finger(*p_dscvrd_print));
+    } catch (JNIGetPointerError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return 0;
     }
-
-    return static_cast<int>(fp_dscv_print_get_finger(*p_dscvrd_print));
 }
 
 
@@ -67,13 +70,14 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1delete
   (JNIEnv *env, jobject obj)
 {
     log("Running ", FUNC_DESC);
-    
-    fp_dscv_print **p_dscvrd_print = reinterpret_cast<fp_dscv_print**>(Util::getPointerAddress(env, obj, "pointer"));
 
-    if (Util::checkAndThrowException(env, p_dscvrd_print, obj,
-                                     CAN_NOT_ACCESS_POINTER(CLASS_DISCOVERED_PRINT), LOCATION_INFO, FUNC_DESC)) {
+    Util::JNIHandler h(env);
+
+    try {
+        fp_dscv_print **p_dscvrd_print = h.getPointer<fp_dscv_print>(obj);
+        return static_cast<int>(fp_dscv_print_delete(*p_dscvrd_print));
+    } catch (JNIGetPointerError& ex) {
+        Util::throwNativeException(env, obj, ex.get_msg(), LOCATION_INFO, FUNC_DESC);
         return 0;
     }
-
-    return static_cast<int>(fp_dscv_print_delete(*p_dscvrd_print));
 }
