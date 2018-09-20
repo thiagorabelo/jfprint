@@ -10,7 +10,7 @@ extern "C"
 JNIEXPORT void JNICALL Java_jfprint_DiscoveredPrintList_nativeClose
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     try {
         Util::DiscoveredItemsList::nativeClose<fp_dscv_print>(env, obj, fp_dscv_prints_free);
@@ -23,7 +23,7 @@ JNIEXPORT void JNICALL Java_jfprint_DiscoveredPrintList_nativeClose
 JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1get
   (JNIEnv *env, jobject obj, jint index)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     try {
         jobject dscv_print = Util::DiscoveredItemsList::nativeGet<fp_dscv_print>(env,
@@ -41,7 +41,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1get
 JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredPrintList_fp_1discoverPrints
   (JNIEnv *env, jclass cls)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     try {
         jobject dscv_print_list = Util::DiscoveredItemsList::discover<fp_dscv_print>(env,

@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <jni.h>
+#include <ctime>
+#include <chrono>
 
 
 extern "C" {
@@ -34,18 +36,37 @@ static void __log(std::ostream &stream, T const& t)
 template <typename T, typename... Ts>
 static void __log(std::ostream &stream, T t, Ts const&... ts)
 {
-    stream << t;
+	auto today = std::chrono::system_clock::now();
+	time_t tt = std::chrono::system_clock::to_time_t(today);
+
+	stream << "[" << t << " " << ctime(&tt) << "] ";
     __log(stream, ts...);
 }
 
 
-#define err(head, ...) __log(std::cerr, "NATIVE ERROR: ", head, ##__VA_ARGS__);
+/*
+ * LOG_LEVEL
+ *	debug = 1
+ *	warning = 2
+ *	error = 3
+ */
 
-
-#ifdef DEBUG
-#define log(head, ...) __log(std::cout, "    NATIVE >> ", head, ##__VA_ARGS__);
+#if LOG_LEVEL == 1
+#define log_debug(head, ...)   __log(std::cout, "DEBUG",   head, ##__VA_ARGS__);
+#define log_warning(head, ...) __log(std::cout, "WARNING", head, ##__VA_ARGS__);
+#define log_error(head, ...)   __log(std::cerr, "ERROR",  head, ##__VA_ARGS__);
+#elif LOG_LEVEL == 2
+#define log_debug(head, ...)
+#define log_warning(head, ...) __log(std::cout, "WARNING", head, ##__VA_ARGS__);
+#define log_error(head, ...)   __log(std::error, "ERROR",  head, ##__VA_ARGS__);
+#elif LOG_LEVEL == 3
+#define log_debug(head, ...)
+#define log_warning(head, ...)
+#define log_error(head, ...)   __log(std::error, "ERROR",  head, ##__VA_ARGS__);
 #else
-#define log(x, ...)
+#define log_debug(head, ...)
+#define log_warning(head, ...)
+#define log_error(head, ...)
 #endif
 
 
@@ -160,6 +181,7 @@ namespace Util {
         template <typename DiscoveredType, typename DiscoverFunc, typename FreeDiscoveredFunc>
         jobject discover(JNIEnv *env, jclass cls, DiscoverFunc fn, FreeDiscoveredFunc fnFree) noexcept(false);
 
+
         template<typename DiscoveredType, typename FreeFunc>
         void nativeClose(JNIEnv *env, jobject obj, FreeFunc fn) noexcept(false);
     };
@@ -212,7 +234,7 @@ namespace Util {
         {
 			jfieldID fidSize = env->GetFieldID(cls, "size", "I");
 			if (NULL == fidSize) {
-				err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+				log_error("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
 				throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
 			}
 
@@ -232,7 +254,7 @@ namespace Util {
 
 			env->SetIntField(jdiscovered_list, fidSize, static_cast<int>(size));
 			if (env->ExceptionCheck()) {
-				err("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
+				log_error("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
 				fnFree(discovereds);
 				throw JNIError("On set field value", LOCATION_INFO, FUNC_DESC);
 			}
@@ -242,7 +264,6 @@ namespace Util {
 
         template<typename DiscoveredType, typename FreeFunc>
         void nativeClose(JNIEnv *env, jobject obj, FreeFunc fn) noexcept(false)
-        // throws: JNIGetObjectClassError, JNIGetIdError, JNIGetFieldValueError
         {
 			DiscoveredType **discovereds = reinterpret_cast<DiscoveredType**>(Util::getPointerAddress(env, obj, "pointer"));
 
@@ -286,7 +307,7 @@ namespace Util {
 		jclass cls = env->FindClass(clsName);
 
         if (NULL == cls) {
-            err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On find class - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On find class", LOCATION_INFO, FUNC_DESC);
         }
 

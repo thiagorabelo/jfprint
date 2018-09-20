@@ -11,14 +11,14 @@ extern "C"
 JNIEXPORT void JNICALL Java_jfprint_DiscoveredPrint_nativeClose
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 }
 
 
 JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getDriverId
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -35,7 +35,7 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getDriverId
 JNIEXPORT jlong JNICALL Java_jfprint_DiscoveredPrint_fp_1getDevtype
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -52,7 +52,7 @@ JNIEXPORT jlong JNICALL Java_jfprint_DiscoveredPrint_fp_1getDevtype
 JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getFinger
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -69,7 +69,7 @@ JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1getFinger
 JNIEXPORT jint JNICALL Java_jfprint_DiscoveredPrint_fp_1delete
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 

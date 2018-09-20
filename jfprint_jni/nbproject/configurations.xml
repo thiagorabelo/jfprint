@@ -86,8 +86,9 @@
             <pElem>include</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>DEBUG</Elem>
+            <Elem>LOG_LEVEL=1</Elem>
           </preprocessorList>
+          <useLinkerLibraries>false</useLinkerLibraries>
         </ccTool>
         <linkerTool>
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libjfprintjni.${CND_DLIB_EXT}</output>

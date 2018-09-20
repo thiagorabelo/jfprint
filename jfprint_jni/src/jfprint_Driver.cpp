@@ -10,7 +10,7 @@ extern "C"
 JNIEXPORT void JNICALL Java_jfprint_Driver_nativeClose
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -28,7 +28,7 @@ JNIEXPORT void JNICALL Java_jfprint_Driver_nativeClose
 JNIEXPORT jstring JNICALL Java_jfprint_Driver_fp_1getName
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -46,7 +46,7 @@ JNIEXPORT jstring JNICALL Java_jfprint_Driver_fp_1getName
 JNIEXPORT jstring JNICALL Java_jfprint_Driver_fp_1getFullName
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -64,7 +64,7 @@ JNIEXPORT jstring JNICALL Java_jfprint_Driver_fp_1getFullName
 JNIEXPORT jlong JNICALL Java_jfprint_Driver_fp_1getDriverID
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 

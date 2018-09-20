@@ -77,67 +77,67 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libjfprintjni.${CND_DLIB_EXT}: ${OBJE
 ${OBJECTDIR}/src/exception/BaseException.o: src/exception/BaseException.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/exception
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/exception/BaseException.o src/exception/BaseException.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/exception/BaseException.o src/exception/BaseException.cpp
 
 ${OBJECTDIR}/src/exception/FPrintError.o: src/exception/FPrintError.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/exception
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/exception/FPrintError.o src/exception/FPrintError.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/exception/FPrintError.o src/exception/FPrintError.cpp
 
 ${OBJECTDIR}/src/exception/JNIError.o: src/exception/JNIError.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/exception
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/exception/JNIError.o src/exception/JNIError.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/exception/JNIError.o src/exception/JNIError.cpp
 
 ${OBJECTDIR}/src/jfprint_Core.o: src/jfprint_Core.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_Core.o src/jfprint_Core.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_Core.o src/jfprint_Core.cpp
 
 ${OBJECTDIR}/src/jfprint_Device.o: src/jfprint_Device.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_Device.o src/jfprint_Device.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_Device.o src/jfprint_Device.cpp
 
 ${OBJECTDIR}/src/jfprint_DiscoveredDevice.o: src/jfprint_DiscoveredDevice.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_DiscoveredDevice.o src/jfprint_DiscoveredDevice.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_DiscoveredDevice.o src/jfprint_DiscoveredDevice.cpp
 
 ${OBJECTDIR}/src/jfprint_DiscoveredDeviceList.o: src/jfprint_DiscoveredDeviceList.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_DiscoveredDeviceList.o src/jfprint_DiscoveredDeviceList.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_DiscoveredDeviceList.o src/jfprint_DiscoveredDeviceList.cpp
 
 ${OBJECTDIR}/src/jfprint_DiscoveredPrint.o: src/jfprint_DiscoveredPrint.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_DiscoveredPrint.o src/jfprint_DiscoveredPrint.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_DiscoveredPrint.o src/jfprint_DiscoveredPrint.cpp
 
 ${OBJECTDIR}/src/jfprint_DiscoveredPrintList.o: src/jfprint_DiscoveredPrintList.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_DiscoveredPrintList.o src/jfprint_DiscoveredPrintList.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_DiscoveredPrintList.o src/jfprint_DiscoveredPrintList.cpp
 
 ${OBJECTDIR}/src/jfprint_Driver.o: src/jfprint_Driver.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_Driver.o src/jfprint_Driver.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_Driver.o src/jfprint_Driver.cpp
 
 ${OBJECTDIR}/src/jfprint_Img.o: src/jfprint_Img.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_Img.o src/jfprint_Img.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_Img.o src/jfprint_Img.cpp
 
 ${OBJECTDIR}/src/jfprint_PrintData.o: src/jfprint_PrintData.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_PrintData.o src/jfprint_PrintData.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/jfprint_PrintData.o src/jfprint_PrintData.cpp
 
 ${OBJECTDIR}/src/util.o: src/util.cpp
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DDEBUG -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/util.o src/util.cpp
+	$(COMPILE.cc) -g -DLOG_LEVEL=1 -I/usr/lib/jvm/java-8-oracle/include -I/usr/lib/jvm/java-8-oracle/include/linux -I/usr/local/libfprint/include -Iinclude -std=c++14 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/util.o src/util.cpp
 
 # Subprojects
 .build-subprojects:

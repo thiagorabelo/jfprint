@@ -10,14 +10,14 @@ extern "C"
 JNIEXPORT void JNICALL Java_jfprint_DiscoveredDevice_nativeClose
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 }
 
 
 JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     fp_dev *dev = NULL;
@@ -27,7 +27,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_DiscoveredDevice_fp_1open
         dev = fp_dev_open(*p_discovered_dev);
 
         if (NULL == dev) {
-            log(UNABLE_OPEN_DEVICE);
+            log_debug(UNABLE_OPEN_DEVICE);
             dev == NULL;
             Util::throwOperationError(env, UNABLE_OPEN_DEVICE);
             return NULL;

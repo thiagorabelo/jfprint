@@ -11,7 +11,7 @@ extern "C"
 JNIEXPORT void JNICALL Java_jfprint_Img_nativeClose
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -28,7 +28,7 @@ JNIEXPORT void JNICALL Java_jfprint_Img_nativeClose
 JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getHeight
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -45,7 +45,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getHeight
 JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getWidth
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -62,7 +62,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1getWidth
 JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_fp_1getData
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -89,7 +89,7 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_Img_fp_1getData
 JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1saveToFile
   (JNIEnv *env, jobject obj, jstring path)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     char *cpath = NULL;
     fp_img **p_img = NULL;
@@ -129,7 +129,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Img_fp_1saveToFile
 JNIEXPORT void JNICALL Java_jfprint_Img_fp_1standardize
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -146,7 +146,7 @@ JNIEXPORT void JNICALL Java_jfprint_Img_fp_1standardize
 JNIEXPORT jobject JNICALL Java_jfprint_Img_fp_1binarize
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     fp_img *binarized_img = NULL;
     Util::JNIHandler h(env);
@@ -156,7 +156,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Img_fp_1binarize
         binarized_img = fp_img_binarize(*p_img);
 
         if (NULL == binarized_img) {
-            log("Can not generate binarized image - " LOCATION_INFO ", ", FUNC_DESC);
+            log_debug("Can not generate binarized image - " LOCATION_INFO ", ", FUNC_DESC);
             Util::throwOperationError(env);
             return NULL;
         }

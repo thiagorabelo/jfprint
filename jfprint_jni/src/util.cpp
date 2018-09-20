@@ -112,20 +112,20 @@ namespace Util {
 	{
 		jclass cls = env->GetObjectClass(obj);
         if (NULL == cls) {
-            err("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get object class", LOCATION_INFO, FUNC_DESC);
         }
 
 		jfieldID pointerId = env->GetFieldID(cls, fieldName, CLASS_BYTE_BUFFER);
         if (NULL == pointerId) {
-            err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
         }
 
 		jobject pointer = env->GetObjectField(obj, pointerId);
 
 		if (NULL == pointer) {
-			err("On get 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
+			log_error("On get 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get 'pointer' value", LOCATION_INFO, FUNC_DESC);
 		}
 
@@ -139,31 +139,31 @@ namespace Util {
     {
         jclass cls = env->GetObjectClass(obj);
         if (NULL == cls) {
-            err("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get object class", LOCATION_INFO, FUNC_DESC);
         }
 
         jfieldID pointerId = env->GetFieldID(cls,  fieldName, CLASS_BYTE_BUFFER);
         if (NULL == pointerId || env->ExceptionCheck()) {
-            err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject oldPointer = env->GetObjectField(obj, pointerId);
         if (env->ExceptionCheck()) {
-            err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject pointer = env->NewDirectByteBuffer(address, size);
         if (NULL == pointer) {
-            err("On get 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get 'pointer' field - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get 'pointer' value", LOCATION_INFO, FUNC_DESC);
         }
 
         env->SetObjectField(obj, pointerId, pointer);
         if (env->ExceptionCheck()) {
-            err("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On set field value", LOCATION_INFO, FUNC_DESC);
         }
 
@@ -181,7 +181,7 @@ namespace Util {
         jclass cls = env->FindClass(clsName);
 
         if (NULL == cls) {
-            err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On find class - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On find class", LOCATION_INFO, FUNC_DESC);
         }
 
@@ -194,13 +194,13 @@ namespace Util {
     {
         jmethodID midInit = env->GetMethodID(cls, "<init>", "()V");
         if (NULL == midInit) {
-            err("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get method id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject newInstance = env->NewObject(cls, midInit);
         if (NULL == newInstance || env->ExceptionCheck()) {
-            err("On instantiate a new object" LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On instantiate a new object" LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On instantiate a new object", LOCATION_INFO, FUNC_DESC);
         }
 
@@ -213,20 +213,20 @@ namespace Util {
     {
         jclass cls = env->FindClass(CLASS_RESULT_TUPLE);
         if (NULL == cls) {
-            err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On find class - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On find class", LOCATION_INFO, FUNC_DESC);
         }
 
         jmethodID midInit = env->GetMethodID(cls, "<init>", CONSTRUCTOR_RESULT_TUPLE);
         if (NULL == midInit) {
-            err("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get method id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject result = env->NewObject(cls, midInit, static_cast<jint>(code));
 
         if (NULL == result  || env->ExceptionCheck()) {
-            err("On instantiate object - ", LOCATION_INFO, FUNC_DESC);
+            log_error("On instantiate object - ", LOCATION_INFO, FUNC_DESC);
             throw JNIError("On instantiate object", LOCATION_INFO, FUNC_DESC);
         }
 
@@ -239,19 +239,19 @@ namespace Util {
     {
         jclass cls = env->FindClass(CLASS_RESULT_TUPLE);
         if (NULL == cls) {
-            err("On find class - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On find class - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On find class", LOCATION_INFO, FUNC_DESC);
         }
 
         jmethodID midInit = env->GetMethodID(cls, "<init>", CONSTRUCTOR_RESULT_TUPLE_2);
         if (NULL == midInit) {
-            err("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get method id - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get method id", LOCATION_INFO, FUNC_DESC);
         }
 
         jobject result = env->NewObject(cls, midInit, obj, static_cast<jint>(code));
         if (NULL == result || env->ExceptionCheck()) {
-            err("On instantiate object - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On instantiate object - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On instantiate object", LOCATION_INFO, FUNC_DESC);
         }
 
@@ -264,19 +264,19 @@ namespace Util {
     {
         jclass cls = env->GetObjectClass(wrapper);
         if (NULL == cls) {
-            err("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get object class - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get object class", LOCATION_INFO, FUNC_DESC);
         }
 
         jfieldID fid = env->GetFieldID(cls, "obj", CLASS_NATIVE_RESOURCE);
         if (NULL == fid) {
-            err("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On get field id - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On get field id", LOCATION_INFO, FUNC_DESC);
         }
 
         env->SetObjectField(wrapper, fid, obj);
         if (env->ExceptionCheck()) {
-            err("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
+            log_error("On set field value - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("On set field value", LOCATION_INFO, FUNC_DESC);
         }
     }
@@ -305,7 +305,7 @@ namespace Util {
         jsize jArraySize = env->GetArrayLength(byteArray);
 
         if (jArraySize <= 0) {
-            log("Array is empty - " LOCATION_INFO ", ", FUNC_DESC);
+            log_debug("Array is empty - " LOCATION_INFO ", ", FUNC_DESC);
             throw JNIError("Array is empty", LOCATION_INFO, FUNC_DESC);
         }
 
@@ -367,7 +367,7 @@ namespace Util {
 
     jint throwNativeException(JNIEnv *env, const char *message, const char *locationInfo, const char *funcName)
     {
-        err(message, " - ", locationInfo, ", ", funcName);
+        log_error(message, " - ", locationInfo, ", ", funcName);
 
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
@@ -395,7 +395,7 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jclass cls,
                               const char *message, const char *locationInfo, const char *funcName)
     {
-        err(message, " - ", locationInfo, ", ", funcName);
+        log_error(message, " - ", locationInfo, ", ", funcName);
 
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
@@ -425,7 +425,7 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jobject obj,
                               const char *message, const char *locationInfo, const char *funcName)
     {
-        err(message, " - ", locationInfo, ", ", funcName);
+        log_error(message, " - ", locationInfo, ", ", funcName);
 
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
@@ -458,7 +458,7 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jthrowable cause,
                               const char *message, const char *locationInfo, const char *funcName)
     {
-        err(message, " - ", locationInfo, ", ", funcName);
+        log_error(message, " - ", locationInfo, ", ", funcName);
 
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
@@ -477,7 +477,7 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jthrowable cause, jobject obj,
                               const char *message, const char *locationInfo, const char *funcName)
     {
-        err(message, " - ", locationInfo, ", ", funcName);
+        log_error(message, " - ", locationInfo, ", ", funcName);
 
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);
@@ -498,7 +498,7 @@ namespace Util {
     jint throwNativeException(JNIEnv *env, jthrowable cause, jclass cls,
                               const char *message, const char *locationInfo, const char *funcName)
     {
-        err(message, " - ", locationInfo, ", ", funcName);
+        log_error(message, " - ", locationInfo, ", ", funcName);
 
         jstring jmessage = env->NewStringUTF(message);
         jstring jfuncName = env->NewStringUTF(funcName);

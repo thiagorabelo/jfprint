@@ -11,7 +11,7 @@ extern "C"
 JNIEXPORT void JNICALL Java_jfprint_PrintData_nativeClose
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -28,7 +28,7 @@ JNIEXPORT void JNICALL Java_jfprint_PrintData_nativeClose
 JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_fp_1getData
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     unsigned char *data = NULL;
@@ -41,7 +41,7 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_fp_1getData
         // TODO: throw exception if array_size > INT_MAX (#include <climits>)
 
         if (NULL == data || array_size == 0) {
-            log(UNABLE_GET_PRINT_DATA " " LOCATION_INFO ", ", FUNC_DESC);
+            log_debug(UNABLE_GET_PRINT_DATA " " LOCATION_INFO ", ", FUNC_DESC);
             Util::throwOperationError(env, UNABLE_GET_PRINT_DATA);
             return NULL;
         }
@@ -66,7 +66,7 @@ JNIEXPORT jbyteArray JNICALL Java_jfprint_PrintData_fp_1getData
 JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
   (JNIEnv *env, jclass cls, jbyteArray jdata)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     jbyte *buf;
@@ -78,7 +78,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
         fp_print_data *print_data = fp_print_data_from_data(reinterpret_cast<unsigned char*>(buf),
                                                             static_cast<size_t>(jArraySize));
         if (NULL == print_data) {
-            log(UNABLE_GET_PRINT_DATA " " LOCATION_INFO ", ", FUNC_DESC);
+            log_debug(UNABLE_GET_PRINT_DATA " " LOCATION_INFO ", ", FUNC_DESC);
             Util::throwOperationError(env, UNABLE_GET_PRINT_DATA);
             delete [] buf;
             return NULL;
@@ -99,7 +99,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromData
 JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1dataSave
   (JNIEnv *env, jobject obj, jint finger)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -115,7 +115,7 @@ JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1dataSave
 JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1dataLoad
   (JNIEnv *env, jclass cls, jobject device, jint finger)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     fp_print_data *print_data = NULL;
@@ -126,7 +126,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1dataLoad
         int ret = fp_print_data_load(*dev, static_cast<fp_finger>(finger), &print_data);
 
         if (ret != 0) {
-            log(CAN_NOT_LOAD_PRINT_DATA " - " LOCATION_INFO ", ", FUNC_DESC);
+            log_debug(CAN_NOT_LOAD_PRINT_DATA " - " LOCATION_INFO ", ", FUNC_DESC);
             Util::throwOperationError(env, CAN_NOT_LOAD_PRINT_DATA);
             return NULL;
         }
@@ -145,7 +145,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1dataLoad
 JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1delete
   (JNIEnv *env, jclass cls, jobject device, jint finger)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -165,7 +165,7 @@ JNIEXPORT jint JNICALL Java_jfprint_PrintData_fp_1delete
 JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromDiscoveredPrint
   (JNIEnv *env, jclass cls, jobject discoveredPrint)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     fp_print_data *data = NULL;
@@ -175,7 +175,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromDiscoveredPrint
         int ret = fp_print_data_from_dscv_print(*discovered_print, &data);
 
         if (0 != ret) {
-            log("Error while obtaining print data from discovered print - " LOCATION_INFO ", ", FUNC_DESC);
+            log_debug("Error while obtaining print data from discovered print - " LOCATION_INFO ", ", FUNC_DESC);
             Util::throwOperationError(env, "Error while obtaining print data from discovered print");
             return NULL;
         }
@@ -195,7 +195,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_PrintData_fp_1fromDiscoveredPrint
 JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDriverId
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -212,7 +212,7 @@ JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDriverId
 JNIEXPORT jlong JNICALL Java_jfprint_PrintData_fp_1getDevtype
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 

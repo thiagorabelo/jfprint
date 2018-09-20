@@ -13,7 +13,7 @@ extern "C"
 JNIEXPORT void JNICALL Java_jfprint_Device_nativeClose
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -30,7 +30,7 @@ JNIEXPORT void JNICALL Java_jfprint_Device_nativeClose
 JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1getDriver
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -42,7 +42,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1getDriver
         fp_driver *driver = fp_dev_get_driver(*dev);
 
         if (NULL == driver) {
-            log("Can not retrieve fp_driver");
+            log_debug("Can not retrieve fp_driver");
             return NULL;
         }
 
@@ -73,7 +73,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1getDriver
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getNumEnrollStages
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -90,7 +90,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getNumEnrollStages
 JNIEXPORT jlong JNICALL Java_jfprint_Device_fp_1getDevType
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -107,7 +107,7 @@ JNIEXPORT jlong JNICALL Java_jfprint_Device_fp_1getDevType
 JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsPrintData
   (JNIEnv *env, jobject obj, jobject printData)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -126,7 +126,7 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsPrintData
 JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsDiscoveredPrint
   (JNIEnv *env, jobject obj, jobject discoveredPrint)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -145,7 +145,7 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsDiscoveredPrint
 JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsImaging
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -162,7 +162,7 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsImaging
 JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsIdentification
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -179,7 +179,7 @@ JNIEXPORT jboolean JNICALL Java_jfprint_Device_fp_1supportsIdentification
 JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
   (JNIEnv *env, jobject obj, jboolean unconditional)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     fp_img **p_img;
@@ -197,7 +197,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
                 fp_img_free(img);
             }
 
-            log("Can not capture image from device. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
+            log_debug("Can not capture image from device. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
             Util::throwCodeError(env, ret);
 
             return NULL;
@@ -229,7 +229,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1imgCapture
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgWidth
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -246,7 +246,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgWidth
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgHeight
   (JNIEnv *env, jobject obj)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -263,7 +263,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1getImgHeight
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
   (JNIEnv *env, jobject obj, jobject printDataWrapper, jobject imgWrapper)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     int ret;
@@ -277,7 +277,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
         ret = fp_enroll_finger_img(*dev, &enrolled_print, &img);
 
         if (ret < 0) {
-            log("Can not enroll finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
+            log_debug("Can not enroll finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
 
             if (NULL != enrolled_print) {
                 fp_print_data_free(enrolled_print);
@@ -357,7 +357,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFingerImg
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
   (JNIEnv *env, jobject obj, jobject enrolled_print, jobject imgWrapper)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     int ret;
@@ -371,7 +371,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
         ret = fp_verify_finger_img(*dev, *data, &img);
 
         if (ret < 0) {
-            log("Can not verify finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
+            log_debug("Can not verify finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
 
             if (NULL != img) {
                 fp_img_free(img);
@@ -421,7 +421,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFingerImg
 JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1identifyFingerImg
   (JNIEnv *env, jobject obj, jobject imgWrapper, jobjectArray printGallery)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     fp_print_data **print_data_list = NULL;
@@ -443,7 +443,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1identifyFingerImg
                 fp_img_free(img);
             }
 
-            log("fp_identify_finger_img returned ", ret);
+            log_debug("fp_identify_finger_img returned ", ret);
             Util::throwCodeError(env, ret);
 
             return NULL;
@@ -529,7 +529,7 @@ JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1identifyFingerImg
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFinger
   (JNIEnv *env, jobject obj, jobject printDataWrapper)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     fp_print_data *enrolled_print = NULL;
@@ -541,7 +541,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFinger
         int ret = fp_enroll_finger(*dev, &enrolled_print);
 
         if (ret < 0) {
-            log("Can not enroll finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
+            log_debug("Can not enroll finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
 
             if (NULL != enrolled_print) {
                 fp_print_data_free(enrolled_print);
@@ -592,7 +592,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1enrollFinger
 JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFinger
   (JNIEnv *env, jobject obj, jobject enrolled_print) // enroledPrintData)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
 
@@ -603,7 +603,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFinger
         int ret = fp_verify_finger(*dev, *data);
 
         if (ret < 0) {
-            log("Can not verify finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
+            log_debug("Can not verify finger. Code Error: ", ret, ". ", LOCATION_INFO, FUNC_DESC);
             Util::throwCodeError(env, ret);
             return 0;
         }
@@ -619,7 +619,7 @@ JNIEXPORT jint JNICALL Java_jfprint_Device_fp_1verifyFinger
 JNIEXPORT jobject JNICALL Java_jfprint_Device_fp_1identifyFinger
   (JNIEnv *env, jobject obj, jobjectArray printGallery)
 {
-    log("Running ", FUNC_DESC);
+    log_debug("Running ", FUNC_DESC);
 
     Util::JNIHandler h(env);
     fp_print_data **p_print_data_list = NULL;
