@@ -17,9 +17,9 @@ public class FpContext extends NativeResource {
 
     native private void nativeClose();
 
-    native private static FpContext context_new();
-    native private int n_devices();
-    native private FpDevice get_device(int index);
+    native private static FpContext native_context_new();
+    native private int native_n_devices();
+    native private FpDevice native_get_device(int index);
 
 
     private ByteBuffer pointer;
@@ -27,15 +27,15 @@ public class FpContext extends NativeResource {
     private FpContext() {}
 
     public static FpContext contextNew() {
-        return context_new();
+        return native_context_new();
     }
 
     public int numDevices() {
-        return n_devices();
+        return native_n_devices();
     }
 
     public FpDevice getDevice(int index) {
-        return get_device(index);
+        return native_get_device(index);
     }
 
     @Override

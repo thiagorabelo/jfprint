@@ -1,10 +1,8 @@
 package jfprint;
 
+import jfprint.util.EnrollProgressInterface;
 import jfprint.base.NativeResource;
 import java.nio.ByteBuffer;
-import jfprint.exception.CodeError;
-import jfprint.util.Result;
-import jfprint.util.ResultTuple;
 
 /**
  *
@@ -35,25 +33,41 @@ public class FpDevice extends NativeResource {
 
     native private void nativeClose();
 
-    native private String get_driver();
-    native private String get_device_id();
-    native private String get_name();
+    native private String native_get_driver();
+    native private String native_get_device_id();
+    native private String native_get_name();
+    native private boolean native_open();
+    native private boolean native_close();
+    native private FpPrint native_enroll(EnrollProgressInterface progress, TemplatePrint templatePrint);  // TODO: Fazer receber TemplatePrint
 
 
     private ByteBuffer pointer;
 
+
     private FpDevice() {}
 
     public String getDriver() {
-        return get_driver();
+        return native_get_driver();
     }
 
     public String getDeviceId() {
-        return get_device_id();
+        return native_get_device_id();
     }
 
     public String getName() {
-        return get_name();
+        return native_get_name();
+    }
+
+    public boolean openDevice() {
+        return native_open();
+    }
+
+    public boolean closeDevice() {
+        return native_close();
+    }
+
+    public FpPrint enroll(EnrollProgressInterface progress, TemplatePrint templatePrint) {
+        return native_enroll(progress, templatePrint);
     }
 
     @Override
